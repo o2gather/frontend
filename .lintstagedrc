@@ -1,0 +1,4 @@
+{
+	"*.{js,ts,svelte,css,scss,postcss,md,json}": "prettier --plugin-search-dir . --write .",
+	"*.{js,ts,svelte}": "eslint --fix"
+}
