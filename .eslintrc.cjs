@@ -1,10 +1,23 @@
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
-	extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
-	plugins: ['svelte3', '@typescript-eslint'],
+	extends: [
+		'plugin:svelte/recommended',
+		'eslint:recommended',
+		'plugin:@typescript-eslint/recommended',
+		'prettier'
+	],
+	plugins: ['@typescript-eslint', 'prettier'],
 	ignorePatterns: ['*.cjs'],
-	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
+	overrides: [
+		{
+			files: ['*.svelte'],
+			parser: 'svelte-eslint-parser',
+			parserOptions: {
+				parser: '@typescript-eslint/parser'
+			}
+		}
+	],
 	settings: {
 		'svelte3/typescript': () => require('typescript')
 	},
@@ -16,5 +29,9 @@ module.exports = {
 		browser: true,
 		es2017: true,
 		node: true
+	},
+	rules: {
+		'prettier/prettier': 'error',
+		'no-inner-declarations': 'off'
 	}
 };
