@@ -8,7 +8,6 @@ module.exports = {
 		'prettier'
 	],
 	plugins: ['@typescript-eslint', 'prettier'],
-	ignorePatterns: ['*.cjs'],
 	overrides: [
 		{
 			files: ['*.svelte'],
