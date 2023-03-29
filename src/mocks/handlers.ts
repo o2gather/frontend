@@ -1,7 +1,14 @@
 import { rest } from 'mswx';
-import { AccountInfoSchema, UserPayloadSchema, UserSchema, type User } from '../models/user';
+import {
+	AccountInfoSchema,
+	EventMemberSchema,
+	UserPayloadSchema,
+	UserSchema,
+	type User
+} from '../models/user';
 import { EventPayloadSchema, EventSchema, type Event } from '../models/event';
 import { ZodError } from 'zod';
+import { MessagePayloadSchema, type Message } from '../models/message';
 
 rest.config.API_PREFIX = '/api/v1';
 
@@ -39,6 +46,52 @@ const mockUsers: User[] = [
 		password: 'test2',
 		phone: '1234567890',
 		userStatus: 1
+	}
+];
+
+const start_time = new Date();
+
+const mockEvents: Event[] = [
+	{
+		id: 1,
+		name: 'Event 1',
+		description: 'Event 1 description',
+		category: 'Event 1 category',
+		start_time,
+		end_time: new Date(start_time.setMonth(start_time.getMonth() + 1)),
+		min_people: 2,
+		max_people: 10,
+		invited: [],
+		member_ids: [],
+		message_ids: []
+	},
+	{
+		id: 2,
+		name: 'Event 2',
+		description: 'Event 2 description',
+		category: 'Event 2 category',
+		start_time,
+		end_time: new Date(start_time.setMonth(start_time.getMonth() + 1)),
+		min_people: 2,
+		max_people: 10,
+		invited: [],
+		member_ids: [],
+		message_ids: []
+	}
+];
+
+const mockMessages: Message[] = [
+	{
+		id: 1,
+		content: 'Message 1 content',
+		author_id: 1,
+		created_at: new Date()
+	},
+	{
+		id: 2,
+		content: 'Message 2 content',
+		author_id: 1,
+		created_at: new Date()
 	}
 ];
 
@@ -179,34 +232,25 @@ const userWithAuthorizationHandlers = [
 		mockUsers.splice(userIndex, 1);
 
 		return res(ctx.status(200));
+	}),
+	rest.get('/user/:username/events', async (req, res, ctx) => {
+		const { username } = req.params;
+
+		const user = mockUsers.find((user) => user.username === username);
+
+		if (!user) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'User not found'
+				})
+			);
+		}
+
+		const events = mockEvents.filter((event) => event.member_ids.includes(user.id));
+
+		return res(ctx.status(200), ctx.json(events));
 	})
-];
-
-const start_time = new Date();
-
-const mockEvents: Event[] = [
-	{
-		id: 1,
-		name: 'Event 1',
-		description: 'Event 1 description',
-		category: 'Event 1 category',
-		start_time,
-		end_time: new Date(start_time.setMonth(start_time.getMonth() + 1)),
-		min_people: 2,
-		max_people: 10,
-		invited: []
-	},
-	{
-		id: 2,
-		name: 'Event 2',
-		description: 'Event 2 description',
-		category: 'Event 2 category',
-		start_time,
-		end_time: new Date(start_time.setMonth(start_time.getMonth() + 1)),
-		min_people: 2,
-		max_people: 10,
-		invited: []
-	}
 ];
 
 const eventHandlers = [
@@ -216,7 +260,9 @@ const eventHandlers = [
 
 			const event: Event = {
 				id: mockEvents.length + 1,
-				...eventPayload
+				...eventPayload,
+				member_ids: [],
+				message_ids: []
 			};
 
 			mockEvents.push(event);
@@ -309,11 +355,134 @@ const eventHandlers = [
 		mockEvents.splice(eventIndex, 1);
 
 		return res(ctx.status(200));
+	}),
+	rest.post('/events/:id/join', async (req, res, ctx) => {
+		const { id } = req.params;
+
+		const event = mockEvents.find((event) => event.id === Number(id));
+
+		if (!event) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Event not found'
+				})
+			);
+		}
+
+		const user = EventMemberSchema.parse(await req.json());
+
+		event.member_ids.push(user.id);
+
+		return res(ctx.status(200));
+	}),
+	rest.post('/events/:id/leave', async (req, res, ctx) => {
+		const { id } = req.params;
+
+		const event = mockEvents.find((event) => event.id === Number(id));
+
+		if (!event) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Event not found'
+				})
+			);
+		}
+
+		const user = EventMemberSchema.parse(await req.json());
+
+		const userIndex = event.member_ids.findIndex((member_id) => member_id === user.id);
+
+		if (userIndex === -1) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'User not found'
+				})
+			);
+		}
+
+		event.member_ids.splice(userIndex, 1);
+
+		return res(ctx.status(200));
+	}),
+	rest.get('/events/:id/messages', async (req, res, ctx) => {
+		const { id } = req.params;
+
+		const event = mockEvents.find((event) => event.id === Number(id));
+
+		if (!event) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Event not found'
+				})
+			);
+		}
+
+		const messages = mockMessages.filter((message) => event.message_ids.includes(message.id));
+
+		return res(ctx.status(200), ctx.json(messages));
+	}),
+	rest.post('/events/:id/messages', async (req, res, ctx) => {
+		const { id } = req.params;
+
+		const event = mockEvents.find((event) => event.id === Number(id));
+
+		if (!event) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Event not found'
+				})
+			);
+		}
+
+		try {
+			const messagePayload = MessagePayloadSchema.parse(await req.json());
+
+			const message: Message = {
+				id: mockMessages.length + 1,
+				...messagePayload,
+				created_at: new Date()
+			};
+
+			mockMessages.push(message);
+
+			event.message_ids.push(message.id);
+
+			return res(ctx.status(201));
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res(
+					ctx.status(400),
+					ctx.json({
+						message: 'Bad request',
+						errors: error.errors
+					})
+				);
+			}
+		}
+	})
+];
+
+const categoriesHandlers = [
+	rest.get('/categories', async (req, res, ctx) => {
+		const categories = mockEvents.reduce((acc, event) => {
+			if (!acc.includes(event.category)) {
+				acc.push(event.category);
+			}
+			return acc;
+		}, [] as string[]);
+
+		return res(ctx.status(200), ctx.json(categories));
 	})
 ];
 
 export const handlers = [
 	...userWithoutAuthorizationHandlers,
 	...userWithAuthorizationHandlers.map(AuthMiddleware),
-	...eventHandlers.map(AuthMiddleware)
+	...eventHandlers.map(AuthMiddleware),
+	...categoriesHandlers.map(AuthMiddleware)
 ];

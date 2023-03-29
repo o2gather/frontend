@@ -16,3 +16,5 @@ export type User = z.infer<typeof UserSchema>;
 export const UserPayloadSchema = UserSchema.omit({ id: true });
 
 export const AccountInfoSchema = UserSchema.pick({ username: true, password: true });
+
+export const EventMemberSchema = UserSchema.pick({ id: true });

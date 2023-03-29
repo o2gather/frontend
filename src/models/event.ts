@@ -9,7 +9,9 @@ const EventPrototypeSchema = z.object({
 	end_time: z.date(),
 	min_people: z.number().min(2),
 	max_people: z.number().min(2),
-	invited: z.array(z.string())
+	invited: z.array(z.string()),
+	member_ids: z.array(z.number()),
+	message_ids: z.array(z.number())
 });
 
 export const EventSchema = EventPrototypeSchema.refine(
@@ -25,7 +27,11 @@ export const EventSchema = EventPrototypeSchema.refine(
 
 export type Event = z.infer<typeof EventSchema>;
 
-export const EventPayloadSchema = EventPrototypeSchema.omit({ id: true })
+export const EventPayloadSchema = EventPrototypeSchema.omit({
+	id: true,
+	member_ids: true,
+	message_ids: true
+})
 	.refine((data) => data.max_people >= data.min_people, {
 		message: 'Max people must be greater than min people',
 		path: ['max_people']
