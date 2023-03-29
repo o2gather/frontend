@@ -1,7 +1,7 @@
 import { rest } from 'mswx';
-import { UserSchema, type User } from '../models/user';
+import { AccountInfoSchema, UserPayloadSchema, UserSchema, type User } from '../models/user';
+import { EventPayloadSchema, EventSchema, type Event } from '../models/event';
 import { ZodError } from 'zod';
-import { AccountInfoSchema } from '../models/account-info';
 
 rest.config.API_PREFIX = '/api/v1';
 
@@ -45,7 +45,13 @@ const mockUsers: User[] = [
 const userWithoutAuthorizationHandlers = [
 	rest.post('/user', async (req, res, ctx) => {
 		try {
-			const user = UserSchema.parse(await req.json());
+			const userPayload = UserPayloadSchema.parse(await req.json());
+
+			const user: User = {
+				id: mockUsers.length + 1,
+				...userPayload
+			};
+
 			mockUsers.push(user);
 
 			return res(ctx.status(201));
@@ -176,7 +182,138 @@ const userWithAuthorizationHandlers = [
 	})
 ];
 
+const start_time = new Date();
+
+const mockEvents: Event[] = [
+	{
+		id: 1,
+		name: 'Event 1',
+		description: 'Event 1 description',
+		category: 'Event 1 category',
+		start_time,
+		end_time: new Date(start_time.setMonth(start_time.getMonth() + 1)),
+		min_people: 2,
+		max_people: 10,
+		invited: []
+	},
+	{
+		id: 2,
+		name: 'Event 2',
+		description: 'Event 2 description',
+		category: 'Event 2 category',
+		start_time,
+		end_time: new Date(start_time.setMonth(start_time.getMonth() + 1)),
+		min_people: 2,
+		max_people: 10,
+		invited: []
+	}
+];
+
+const eventHandlers = [
+	rest.post('/events', async (req, res, ctx) => {
+		try {
+			const eventPayload = EventPayloadSchema.parse(await req.json());
+
+			const event: Event = {
+				id: mockEvents.length + 1,
+				...eventPayload
+			};
+
+			mockEvents.push(event);
+
+			return res(ctx.status(201));
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res(
+					ctx.status(400),
+					ctx.json({
+						message: 'Bad request',
+						errors: error.errors
+					})
+				);
+			}
+		}
+	}),
+	rest.get('/events', async (req, res, ctx) => {
+		return res(ctx.status(200), ctx.json(mockEvents));
+	}),
+	rest.get('/events/:id', async (req, res, ctx) => {
+		const { id } = req.params;
+
+		const event = mockEvents.find((event) => event.id === Number(id));
+
+		if (!event) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Event not found'
+				})
+			);
+		}
+
+		return res(ctx.status(200), ctx.json(event));
+	}),
+	rest.patch('/events/:id', async (req, res, ctx) => {
+		const { id } = req.params;
+
+		const event = mockEvents.find((event) => event.id === Number(id));
+
+		if (!event) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Event not found'
+				})
+			);
+		}
+
+		try {
+			const newData: Event = EventSchema.parse(await req.json());
+
+			Object.assign(event, newData);
+
+			return res(ctx.status(200));
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res(
+					ctx.status(400),
+					ctx.json({
+						message: 'Bad request',
+						errors: error.errors
+					})
+				);
+			}
+
+			return res(
+				ctx.status(500),
+				ctx.json({
+					message: 'Internal server error'
+				})
+			);
+		}
+	}),
+	rest.delete('/events/:id', async (req, res, ctx) => {
+		const { id } = req.params;
+
+		const eventIndex = mockEvents.findIndex((event) => event.id === Number(id));
+
+		if (eventIndex === -1) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Event not found'
+				})
+			);
+		}
+
+		mockEvents.splice(eventIndex, 1);
+
+		return res(ctx.status(200));
+	})
+];
+
 export const handlers = [
 	...userWithoutAuthorizationHandlers,
-	...userWithAuthorizationHandlers.map(AuthMiddleware)
+	...userWithAuthorizationHandlers.map(AuthMiddleware),
+	...eventHandlers.map(AuthMiddleware)
 ];

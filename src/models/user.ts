@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const UserSchema = z.object({
-	id: z.number().optional(),
+	id: z.number(),
 	username: z.string(),
 	firstName: z.string(),
 	lastName: z.string(),
@@ -12,3 +12,7 @@ export const UserSchema = z.object({
 });
 
 export type User = z.infer<typeof UserSchema>;
+
+export const UserPayloadSchema = UserSchema.omit({ id: true });
+
+export const AccountInfoSchema = UserSchema.pick({ username: true, password: true });
