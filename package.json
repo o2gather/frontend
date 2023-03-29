@@ -43,5 +43,8 @@
 	"type": "module",
 	"msw": {
 		"workerDirectory": "static"
+	},
+	"dependencies": {
+		"zod": "^3.21.4"
 	}
 }
