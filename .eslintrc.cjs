@@ -31,6 +31,7 @@ module.exports = {
 	},
 	rules: {
 		'prettier/prettier': 'error',
-		'no-inner-declarations': 'off'
+		'no-inner-declarations': 'off',
+		semi: ['error', 'always']
 	}
 };
