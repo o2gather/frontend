@@ -1,6 +1,7 @@
 import { rest } from 'mswx';
-import { UserSchema } from '../models/user';
+import { UserSchema, type User } from '../models/user';
 import { ZodError } from 'zod';
+import { AccountInfoSchema } from '../models/account-info';
 
 rest.config.API_PREFIX = '/api/v1';
 
@@ -18,12 +19,34 @@ const AuthMiddleware = rest.middleware((req, res, ctx, next) => {
 	return next();
 });
 
+const mockUsers: User[] = [
+	{
+		id: 1,
+		username: 'test',
+		firstName: 'Test',
+		lastName: 'User',
+		email: 'test@gmail.com',
+		password: 'test',
+		phone: '1234567890',
+		userStatus: 1
+	},
+	{
+		id: 2,
+		username: 'test2',
+		firstName: 'Test2',
+		lastName: 'User2',
+		email: 'test2@gmail.com',
+		password: 'test2',
+		phone: '1234567890',
+		userStatus: 1
+	}
+];
+
 const userWithoutAuthorizationHandlers = [
 	rest.post('/user', async (req, res, ctx) => {
-		const payload = await req.json();
-
 		try {
-			UserSchema.parse(payload);
+			const user = UserSchema.parse(await req.json());
+			mockUsers.push(user);
 
 			return res(ctx.status(201));
 		} catch (error) {
@@ -46,10 +69,18 @@ const userWithoutAuthorizationHandlers = [
 		}
 	}),
 	rest.post('/user/login', async (req, res, ctx) => {
-		const payload = await req.json();
-
 		try {
-			UserSchema.parse(payload);
+			const accountInfo = AccountInfoSchema.parse(await req.json());
+			const user = mockUsers.find((user) => user.username === accountInfo.username);
+
+			if (!user) {
+				return res(
+					ctx.status(404),
+					ctx.json({
+						message: 'User not found'
+					})
+				);
+			}
 
 			return res(ctx.status(200));
 		} catch (error) {
@@ -80,23 +111,37 @@ const userWithAuthorizationHandlers = [
 	rest.get('/user/:username', async (req, res, ctx) => {
 		const { username } = req.params;
 
-		return res(
-			ctx.status(200),
-			ctx.json({
-				id: 1,
-				username,
-				firstName: 'Test',
-				lastName: 'User',
-				email: 'test@gmail.com',
-				password: 'test',
-				phone: '1234567890',
-				userStatus: 1
-			})
-		);
+		const user = mockUsers.find((user) => user.username === username);
+
+		if (!user) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'User not found'
+				})
+			);
+		}
+
+		return res(ctx.status(200), ctx.json(user));
 	}),
 	rest.patch('/user/:username', async (req, res, ctx) => {
+		const { username } = req.params;
+
+		const user = mockUsers.find((user) => user.username === username);
+
+		if (!user) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'User not found'
+				})
+			);
+		}
+
 		try {
-			UserSchema.parse(await req.json());
+			const newData = UserSchema.parse(await req.json());
+
+			Object.assign(user, newData);
 
 			return res(ctx.status(200));
 		} catch (error) {
@@ -114,7 +159,9 @@ const userWithAuthorizationHandlers = [
 	rest.delete('/user/:username', async (req, res, ctx) => {
 		const { username } = req.params;
 
-		if (username !== 'test') {
+		const userIndex = mockUsers.findIndex((user) => user.username === username);
+
+		if (userIndex === -1) {
 			return res(
 				ctx.status(404),
 				ctx.json({
@@ -122,6 +169,8 @@ const userWithAuthorizationHandlers = [
 				})
 			);
 		}
+
+		mockUsers.splice(userIndex, 1);
 
 		return res(ctx.status(200));
 	})
