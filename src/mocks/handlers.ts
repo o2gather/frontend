@@ -8,9 +8,12 @@ import { MemberPayloadSchema, type Member } from '../models/member';
 
 rest.config.API_PREFIX = '/api/v1';
 
+const mockToken =
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4gRG9lIiwicGFzc3dvcmQiOjc3Nzc3fQ.rvPiI2N1yNgMlJRFR11y4BXBVGGEMn4ypRzfivWAhhA';
+
 const AuthMiddleware = rest.middleware((req, res, ctx, next) => {
 	const authorization = req.headers.get('Authorization');
-	if (!authorization) {
+	if (authorization !== `Bearer ${mockToken}`) {
 		return res(
 			ctx.status(401),
 			ctx.json({
@@ -63,16 +66,21 @@ const userWithoutAuthorizationHandlers = [
 			const accountInfo = AccountInfoSchema.parse(await req.json());
 			const user = mockUsers.find((user) => user.username === accountInfo.username);
 
-			if (!user) {
+			if (!user || user.password !== accountInfo.password) {
 				return res(
-					ctx.status(404),
+					ctx.status(400),
 					ctx.json({
-						message: 'User not found'
+						message: 'Invalid username or password'
 					})
 				);
 			}
 
-			return res(ctx.status(200));
+			return res(
+				ctx.status(200),
+				ctx.json({
+					token: mockToken
+				})
+			);
 		} catch (error) {
 			if (error instanceof ZodError) {
 				return res(
