@@ -1,14 +1,10 @@
 import { rest } from 'mswx';
-import {
-	AccountInfoSchema,
-	EventMemberSchema,
-	UserPayloadSchema,
-	UserSchema,
-	type User
-} from '../models/user';
+import { AccountInfoSchema, UserPayloadSchema, UserSchema, type User } from '../models/user';
 import { EventPayloadSchema, EventSchema, type Event } from '../models/event';
 import { ZodError } from 'zod';
 import { MessagePayloadSchema, type Message } from '../models/message';
+import { v4 as uuidv4 } from 'uuid';
+import { MemberPayloadSchema, type Member } from '../models/member';
 
 rest.config.API_PREFIX = '/api/v1';
 
@@ -26,82 +22,17 @@ const AuthMiddleware = rest.middleware((req, res, ctx, next) => {
 	return next();
 });
 
-const mockUsers: User[] = [
-	{
-		id: 1,
-		username: 'test',
-		firstName: 'Test',
-		lastName: 'User',
-		email: 'test@gmail.com',
-		password: 'test',
-		phone: '1234567890',
-		userStatus: 1
-	},
-	{
-		id: 2,
-		username: 'test2',
-		firstName: 'Test2',
-		lastName: 'User2',
-		email: 'test2@gmail.com',
-		password: 'test2',
-		phone: '1234567890',
-		userStatus: 1
-	}
-];
-
-const start_time = new Date();
-
-const mockEvents: Event[] = [
-	{
-		id: 1,
-		name: 'Event 1',
-		description: 'Event 1 description',
-		category: 'Event 1 category',
-		start_time,
-		end_time: new Date(start_time.setMonth(start_time.getMonth() + 1)),
-		min_people: 2,
-		max_people: 10,
-		invited: [],
-		member_ids: [],
-		message_ids: []
-	},
-	{
-		id: 2,
-		name: 'Event 2',
-		description: 'Event 2 description',
-		category: 'Event 2 category',
-		start_time,
-		end_time: new Date(start_time.setMonth(start_time.getMonth() + 1)),
-		min_people: 2,
-		max_people: 10,
-		invited: [],
-		member_ids: [],
-		message_ids: []
-	}
-];
-
-const mockMessages: Message[] = [
-	{
-		id: 1,
-		content: 'Message 1 content',
-		author_id: 1,
-		created_at: new Date()
-	},
-	{
-		id: 2,
-		content: 'Message 2 content',
-		author_id: 1,
-		created_at: new Date()
-	}
-];
+const mockUsers: User[] = [];
+const mockEvents: Event[] = [];
+const mockMessages: Message[] = [];
 
 const userWithoutAuthorizationHandlers = [
-	rest.post('/user', async (req, res, ctx) => {
+	rest.post('/register', async (req, res, ctx) => {
 		try {
 			const userPayload = UserPayloadSchema.parse(await req.json());
 
 			const user: User = {
-				id: mockUsers.length + 1,
+				id: uuidv4(),
 				...userPayload
 			};
 
@@ -127,7 +58,7 @@ const userWithoutAuthorizationHandlers = [
 			);
 		}
 	}),
-	rest.post('/user/login', async (req, res, ctx) => {
+	rest.post('/login', async (req, res, ctx) => {
 		try {
 			const accountInfo = AccountInfoSchema.parse(await req.json());
 			const user = mockUsers.find((user) => user.username === accountInfo.username);
@@ -164,13 +95,13 @@ const userWithoutAuthorizationHandlers = [
 ];
 
 const userWithAuthorizationHandlers = [
-	rest.post('/user/logout', async (req, res, ctx) => {
+	rest.post('/logout', async (req, res, ctx) => {
 		return res(ctx.status(200));
 	}),
-	rest.get('/user/:username', async (req, res, ctx) => {
-		const { username } = req.params;
+	rest.get('/users/:user_id', async (req, res, ctx) => {
+		const { user_id } = req.params;
 
-		const user = mockUsers.find((user) => user.username === username);
+		const user = mockUsers.find((user) => user.id === user_id);
 
 		if (!user) {
 			return res(
@@ -183,10 +114,10 @@ const userWithAuthorizationHandlers = [
 
 		return res(ctx.status(200), ctx.json(user));
 	}),
-	rest.patch('/user/:username', async (req, res, ctx) => {
-		const { username } = req.params;
+	rest.patch('/users/:user_id', async (req, res, ctx) => {
+		const { user_id } = req.params;
 
-		const user = mockUsers.find((user) => user.username === username);
+		const user = mockUsers.find((user) => user.id === user_id);
 
 		if (!user) {
 			return res(
@@ -215,10 +146,10 @@ const userWithAuthorizationHandlers = [
 			}
 		}
 	}),
-	rest.delete('/user/:username', async (req, res, ctx) => {
-		const { username } = req.params;
+	rest.delete('/users/:user_id', async (req, res, ctx) => {
+		const { user_id } = req.params;
 
-		const userIndex = mockUsers.findIndex((user) => user.username === username);
+		const userIndex = mockUsers.findIndex((user) => user.id === user_id);
 
 		if (userIndex === -1) {
 			return res(
@@ -233,10 +164,10 @@ const userWithAuthorizationHandlers = [
 
 		return res(ctx.status(200));
 	}),
-	rest.get('/user/:username/events', async (req, res, ctx) => {
-		const { username } = req.params;
+	rest.get('/users/:user_id/events', async (req, res, ctx) => {
+		const { user_id } = req.params;
 
-		const user = mockUsers.find((user) => user.username === username);
+		const user = mockUsers.find((user) => user.id === user_id);
 
 		if (!user) {
 			return res(
@@ -247,7 +178,9 @@ const userWithAuthorizationHandlers = [
 			);
 		}
 
-		const events = mockEvents.filter((event) => event.member_ids.includes(user.id));
+		const events = mockEvents.filter((event) =>
+			event.members.map((member) => member.email).includes(user.email)
+		);
 
 		return res(ctx.status(200), ctx.json(events));
 	})
@@ -259,10 +192,9 @@ const eventHandlers = [
 			const eventPayload = EventPayloadSchema.parse(await req.json());
 
 			const event: Event = {
-				id: mockEvents.length + 1,
+				id: uuidv4(),
 				...eventPayload,
-				member_ids: [],
-				message_ids: []
+				members: []
 			};
 
 			mockEvents.push(event);
@@ -283,10 +215,10 @@ const eventHandlers = [
 	rest.get('/events', async (req, res, ctx) => {
 		return res(ctx.status(200), ctx.json(mockEvents));
 	}),
-	rest.get('/events/:id', async (req, res, ctx) => {
-		const { id } = req.params;
+	rest.get('/events/:event_id', async (req, res, ctx) => {
+		const { event_id } = req.params;
 
-		const event = mockEvents.find((event) => event.id === Number(id));
+		const event = mockEvents.find((event) => event.id === event_id);
 
 		if (!event) {
 			return res(
@@ -299,10 +231,10 @@ const eventHandlers = [
 
 		return res(ctx.status(200), ctx.json(event));
 	}),
-	rest.patch('/events/:id', async (req, res, ctx) => {
-		const { id } = req.params;
+	rest.patch('/events/:event_id', async (req, res, ctx) => {
+		const { event_id } = req.params;
 
-		const event = mockEvents.find((event) => event.id === Number(id));
+		const event = mockEvents.find((event) => event.id === event_id);
 
 		if (!event) {
 			return res(
@@ -338,10 +270,10 @@ const eventHandlers = [
 			);
 		}
 	}),
-	rest.delete('/events/:id', async (req, res, ctx) => {
-		const { id } = req.params;
+	rest.delete('/events/:event_id', async (req, res, ctx) => {
+		const { event_id } = req.params;
 
-		const eventIndex = mockEvents.findIndex((event) => event.id === Number(id));
+		const eventIndex = mockEvents.findIndex((event) => event.id === event_id);
 
 		if (eventIndex === -1) {
 			return res(
@@ -356,10 +288,10 @@ const eventHandlers = [
 
 		return res(ctx.status(200));
 	}),
-	rest.post('/events/:id/join', async (req, res, ctx) => {
-		const { id } = req.params;
+	rest.put('/events/:event_id/join', async (req, res, ctx) => {
+		const { event_id } = req.params;
 
-		const event = mockEvents.find((event) => event.id === Number(id));
+		const event = mockEvents.find((event) => event.id === event_id);
 
 		if (!event) {
 			return res(
@@ -370,47 +302,57 @@ const eventHandlers = [
 			);
 		}
 
-		const user = EventMemberSchema.parse(await req.json());
+		// TODO: extract user info from token
+		const user = mockUsers[0];
 
-		event.member_ids.push(user.id);
+		const memberPayload = MemberPayloadSchema.parse(await req.json());
+		const member: Member = {
+			name: user.firstName + ' ' + user.lastName,
+			...memberPayload,
+			email: user.email,
+			phone: user.phone
+		};
+
+		event.members.push(member);
+
+		return res(ctx.status(200), ctx.json(event));
+	}),
+	rest.post('/events/:event_id/leave', async (req, res, ctx) => {
+		const { event_id } = req.params;
+
+		const event = mockEvents.find((event) => event.id === event_id);
+
+		if (!event) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Event not found'
+				})
+			);
+		}
+
+		// TODO: extract user info from token
+		const user = mockUsers[0];
+
+		const memberIndex = event.members.findIndex((member) => member.email === user.email);
+
+		if (memberIndex === -1) {
+			return res(
+				ctx.status(404),
+				ctx.json({
+					message: 'Member not found'
+				})
+			);
+		}
+
+		event.members.splice(memberIndex, 1);
 
 		return res(ctx.status(200));
 	}),
-	rest.post('/events/:id/leave', async (req, res, ctx) => {
-		const { id } = req.params;
+	rest.get('/events/:event_id/msgs', async (req, res, ctx) => {
+		const { event_id } = req.params;
 
-		const event = mockEvents.find((event) => event.id === Number(id));
-
-		if (!event) {
-			return res(
-				ctx.status(404),
-				ctx.json({
-					message: 'Event not found'
-				})
-			);
-		}
-
-		const user = EventMemberSchema.parse(await req.json());
-
-		const userIndex = event.member_ids.findIndex((member_id) => member_id === user.id);
-
-		if (userIndex === -1) {
-			return res(
-				ctx.status(404),
-				ctx.json({
-					message: 'User not found'
-				})
-			);
-		}
-
-		event.member_ids.splice(userIndex, 1);
-
-		return res(ctx.status(200));
-	}),
-	rest.get('/events/:id/messages', async (req, res, ctx) => {
-		const { id } = req.params;
-
-		const event = mockEvents.find((event) => event.id === Number(id));
+		const event = mockEvents.find((event) => event.id === event_id);
 
 		if (!event) {
 			return res(
@@ -421,14 +363,14 @@ const eventHandlers = [
 			);
 		}
 
-		const messages = mockMessages.filter((message) => event.message_ids.includes(message.id));
+		const messages = mockMessages.filter((message) => message.event_id === event_id);
 
 		return res(ctx.status(200), ctx.json(messages));
 	}),
-	rest.post('/events/:id/messages', async (req, res, ctx) => {
-		const { id } = req.params;
+	rest.post('/events/:event_id/msgs', async (req, res, ctx) => {
+		const { event_id } = req.params;
 
-		const event = mockEvents.find((event) => event.id === Number(id));
+		const event = mockEvents.find((event) => event.id === event_id);
 
 		if (!event) {
 			return res(
@@ -438,19 +380,22 @@ const eventHandlers = [
 				})
 			);
 		}
+
+		// TODO: extract user info from token
+		const user = mockUsers[0];
 
 		try {
 			const messagePayload = MessagePayloadSchema.parse(await req.json());
 
 			const message: Message = {
-				id: mockMessages.length + 1,
+				id: uuidv4(),
 				...messagePayload,
+				name: user.firstName + ' ' + user.lastName,
+				event_id: event_id as string,
 				created_at: new Date()
 			};
 
 			mockMessages.push(message);
-
-			event.message_ids.push(message.id);
 
 			return res(ctx.status(201));
 		} catch (error) {
