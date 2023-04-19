@@ -20,7 +20,7 @@
 		</div>
 	</div>
 	<div>
-		<div class="flex flex-col items-center">
+		<div class="flex flex-col items-center h-[calc(100vh-500px)] overflow-y-scroll">
 			<div
 				class="flex items-center bg-white border border-gray-200 my-2 rounded-lg shadow md:flex-row md:max-w-3xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
 			>
