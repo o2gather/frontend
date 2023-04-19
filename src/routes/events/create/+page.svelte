@@ -7,7 +7,7 @@
 
 	export let data;
 
-	const { form, errors } = superForm(data.form);
+	const { form, errors, constraints } = superForm(data.form);
 
 	let isDropdownOpen = false;
 	let categories = ['Shopping', 'Images', 'News', 'Finance'];
@@ -17,11 +17,6 @@
 
 	$: $form.start_time = new Date(startTime).getTime();
 	$: $form.end_time = new Date(endTime).getTime();
-
-	$: superValidate($form, schemas.createEvent_Body).then((result) => {
-		$errors = result.errors;
-		console.log(result);
-	});
 </script>
 
 <div class="mx-12 md:mx-36 mt-8 mb-12 flex flex-col gap-6">
@@ -34,10 +29,13 @@
 			method="post"
 			class="grid grid-flow-row gap-4"
 			on:submit|preventDefault={() => {
-				const { success } = schemas.createEvent_Body.safeParse($form);
-				if (success) {
-					goto('/events/1');
-				}
+				superValidate($form, schemas.createEvent_Body).then((result) => {
+					$errors.name = result.errors.name;
+
+					if (result.valid) {
+						goto('/events/1');
+					}
+				});
 			}}
 		>
 			<div class="flex flex-col">
@@ -101,6 +99,12 @@
 							placeholder="Event name"
 							required
 							bind:value={$form.name}
+							{...$constraints.name}
+							on:input={() => {
+								superValidate($form, schemas.createEvent_Body).then((result) => {
+									$errors.name = result.errors.name;
+								});
+							}}
 						/>
 					</div>
 				</div>
@@ -118,6 +122,12 @@
 							placeholder="Min amount"
 							required
 							bind:value={$form.min_amount}
+							{...$constraints.min_amount}
+							on:input={() => {
+								superValidate($form, schemas.createEvent_Body).then((result) => {
+									$errors.min_amount = result.errors.min_amount;
+								});
+							}}
 						/>
 
 						<ErrorMessage message={$errors.min_amount} />
@@ -132,6 +142,12 @@
 							placeholder="Max amount"
 							required
 							bind:value={$form.max_amount}
+							{...$constraints.max_amount}
+							on:input={() => {
+								superValidate($form, schemas.createEvent_Body).then((result) => {
+									$errors.max_amount = result.errors.max_amount;
+								});
+							}}
 						/>
 						<ErrorMessage message={$errors.max_amount} />
 					</label>
@@ -146,6 +162,11 @@
 							placeholder="Start time"
 							required
 							bind:value={startTime}
+							on:input={() => {
+								superValidate($form, schemas.createEvent_Body).then((result) => {
+									$errors.start_time = result.errors.start_time;
+								});
+							}}
 						/>
 						<ErrorMessage message={$errors.start_time} />
 					</label>
@@ -159,6 +180,11 @@
 							placeholder="End time"
 							required
 							bind:value={endTime}
+							on:input={() => {
+								superValidate($form, schemas.createEvent_Body).then((result) => {
+									$errors.end_time = result.errors.end_time;
+								});
+							}}
 						/>
 						<ErrorMessage message={$errors.end_time} />
 					</label>
@@ -204,6 +230,12 @@
 							placeholder="Search Mockups, Logos..."
 							required
 							bind:value={$form.invited}
+							{...$constraints.invited}
+							on:input={() => {
+								superValidate($form, schemas.createEvent_Body).then((result) => {
+									$errors.invited = result.errors.invited;
+								});
+							}}
 						/>
 						<button
 							type="submit"
