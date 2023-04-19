@@ -1,0 +1,227 @@
+<script lang="ts">
+	import { isoToDateTimeString } from '../../../utils';
+	import { superValidate, superForm } from 'sveltekit-superforms/client';
+	import { schemas } from '../../../api/api.client';
+	import { goto } from '$app/navigation';
+	import ErrorMessage from '../../../components/ErrorMessage.svelte';
+
+	export let data;
+
+	const { form, errors } = superForm(data.form);
+
+	let isDropdownOpen = false;
+	let categories = ['Shopping', 'Images', 'News', 'Finance'];
+
+	let startTime = isoToDateTimeString(new Date().getTime());
+	let endTime = isoToDateTimeString(new Date().getTime());
+
+	$: $form.start_time = new Date(startTime).getTime();
+	$: $form.end_time = new Date(endTime).getTime();
+
+	$: superValidate($form, schemas.createEvent_Body).then((result) => {
+		$errors = result.errors;
+		console.log(result);
+	});
+</script>
+
+<div class="mx-12 md:mx-36 mt-8 mb-12 flex flex-col gap-6">
+	<div class="font-bold text-4xl">Create Event</div>
+
+	<hr />
+
+	<div class="leading-8 mt-4">
+		<form
+			method="post"
+			class="grid grid-flow-row gap-4"
+			on:submit|preventDefault={() => {
+				const { success } = schemas.createEvent_Body.safeParse($form);
+				if (success) {
+					goto('/events/1');
+				}
+			}}
+		>
+			<div class="flex flex-col">
+				<div class="flex">
+					<label
+						for="search-dropdown"
+						class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+					/>
+					<button
+						id="dropdown-button"
+						on:click={() => (isDropdownOpen = !isDropdownOpen)}
+						on:keypress={() => (isDropdownOpen = !isDropdownOpen)}
+						class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 dark:border-gray-700 dark:text-white rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+						type="button"
+						>{$form.category || 'All categories'}
+						<svg
+							aria-hidden="true"
+							class="w-4 h-4 ml-1"
+							fill="currentColor"
+							viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg"
+							><path
+								fill-rule="evenodd"
+								d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+								clip-rule="evenodd"
+							/></svg
+						></button
+					>
+					<div
+						class="absolute translate-y-[50px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+						class:hidden={!isDropdownOpen}
+					>
+						<ul
+							class="py-2 text-sm text-gray-700 dark:text-gray-200"
+							aria-labelledby="dropdown-button"
+						>
+							{#each categories as category (category)}
+								<li
+									class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+									on:click={() => {
+										$form.category = category;
+										isDropdownOpen = false;
+									}}
+									on:keypress={() => {
+										$form.category = category;
+										isDropdownOpen = false;
+									}}
+								>
+									{category}
+								</li>
+							{/each}
+						</ul>
+					</div>
+					<ErrorMessage message={$errors.category} />
+
+					<div class="relative w-full">
+						<input
+							type="text"
+							id="search-dropdown"
+							class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg border-l-gray-100 border-l-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+							placeholder="Event name"
+							required
+							bind:value={$form.name}
+						/>
+					</div>
+				</div>
+
+				<ErrorMessage message={$errors.name} />
+			</div>
+
+			<div class="grid gap-6 md:grid-cols-2">
+				<div>
+					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+						>Min amount
+						<input
+							type="number"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="Min amount"
+							required
+							bind:value={$form.min_amount}
+						/>
+
+						<ErrorMessage message={$errors.min_amount} />
+					</label>
+				</div>
+				<div>
+					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+						>Max amount
+						<input
+							type="number"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="Max amount"
+							required
+							bind:value={$form.max_amount}
+						/>
+						<ErrorMessage message={$errors.max_amount} />
+					</label>
+				</div>
+
+				<div>
+					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+						>Start time
+						<input
+							type="datetime-local"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="Start time"
+							required
+							bind:value={startTime}
+						/>
+						<ErrorMessage message={$errors.start_time} />
+					</label>
+				</div>
+				<div>
+					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+						>End time
+						<input
+							type="datetime-local"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="End time"
+							required
+							bind:value={endTime}
+						/>
+						<ErrorMessage message={$errors.end_time} />
+					</label>
+				</div>
+			</div>
+
+			<div>
+				<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+					>Description
+					<textarea
+						rows="4"
+						class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Write your thoughts here..."
+						bind:value={$form.description}
+					/>
+				</label>
+			</div>
+
+			<div>
+				<label
+					>Invite member(s)
+					<div class="relative">
+						<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+							<svg
+								aria-hidden="true"
+								class="w-5 h-5 text-gray-500 dark:text-gray-400"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+								xmlns="http://www.w3.org/2000/svg"
+								><path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+								/></svg
+							>
+						</div>
+						<input
+							type="search"
+							id="default-search"
+							class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="Search Mockups, Logos..."
+							required
+							bind:value={$form.invited}
+						/>
+						<button
+							type="submit"
+							class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+							>Search</button
+						>
+					</div>
+					<ErrorMessage message={$errors.invited} />
+				</label>
+			</div>
+
+			<div class="flex justify-end mt-6">
+				<button
+					type="submit"
+					class=" w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+					>Create</button
+				>
+			</div>
+		</form>
+	</div>
+</div>

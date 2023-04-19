@@ -23,7 +23,7 @@ const Event = z.object({
 });
 const DefaultError = z.object({ message: z.string(), error_code: z.string().optional() });
 const createEvent_Body = z.object({
-	name: z.string(),
+	name: z.string().min(1),
 	description: z.string(),
 	category: z.string(),
 	start_time: z.number(),
