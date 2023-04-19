@@ -1,3 +1,13 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+
+	let messageDiv: HTMLDivElement;
+
+	onMount(() => {
+		messageDiv.scrollTop = messageDiv.scrollHeight;
+	});
+</script>
+
 <div class="mx-12 md:mx-36 mt-8 mb-12 flex flex-col gap-6">
 	<div class="font-bold text-4xl">Lorem Ipsum</div>
 
@@ -20,7 +30,39 @@
 		</div>
 	</div>
 	<div>
-		<div class="flex flex-col items-center h-[calc(100vh-500px)] overflow-y-scroll">
+		<div
+			class="flex flex-col items-center h-[calc(100vh-500px)] overflow-y-scroll"
+			bind:this={messageDiv}
+		>
+			<div
+				class="flex items-center bg-white border border-gray-200 my-2 rounded-lg shadow md:flex-row md:max-w-3xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+			>
+				<img
+					class="object-cover object-center w-20 h-20 m-4 rounded-full aspect-square bg-gray-200"
+					src="https://source.unsplash.com/featured/200x200"
+					alt=""
+				/>
+				<div class="m-4">
+					Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse
+					chronological order.
+				</div>
+			</div>
+
+			<div
+				class="flex items-center bg-white border border-gray-200 my-2 rounded-lg shadow md:flex-row md:max-w-3xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+			>
+				<div class="m-4">
+					Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse
+					chronological order.
+				</div>
+
+				<img
+					class="object-cover object-center w-20 h-20 m-4 rounded-full aspect-square bg-gray-200"
+					src="https://source.unsplash.com/featured/200x200"
+					alt=""
+				/>
+			</div>
+
 			<div
 				class="flex items-center bg-white border border-gray-200 my-2 rounded-lg shadow md:flex-row md:max-w-3xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
 			>
