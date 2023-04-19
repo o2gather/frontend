@@ -5,8 +5,8 @@
 </script>
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
-	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-		<a href="/" class="flex items-center">
+	<div class="flex flex-wrap items-center justify-betwee mx-6 md:mx-36 my-6">
+		<a href="/" class="flex items-center grow">
 			<img
 				src="https://www.svgrepo.com/show/498281/people.svg"
 				class="h-8 mr-3"

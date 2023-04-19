@@ -25,7 +25,7 @@
 				class="flex items-center bg-white border border-gray-200 my-2 rounded-lg shadow md:flex-row md:max-w-3xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
 			>
 				<img
-					class="object-cover h-auto w-20 m-4 rounded-full"
+					class="object-cover object-center w-20 h-20 m-4 rounded-full aspect-square bg-gray-200"
 					src="https://source.unsplash.com/featured/200x200"
 					alt=""
 				/>
@@ -44,7 +44,7 @@
 				</div>
 
 				<img
-					class="object-cover h-auto w-20 m-4 rounded-full"
+					class="object-cover object-center w-20 h-20 m-4 rounded-full aspect-square bg-gray-200"
 					src="https://source.unsplash.com/featured/200x200"
 					alt=""
 				/>
@@ -54,7 +54,7 @@
 				class="flex items-center bg-white border border-gray-200 my-2 rounded-lg shadow md:flex-row md:max-w-3xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
 			>
 				<img
-					class="object-cover h-auto w-20 m-4 rounded-full"
+					class="object-cover object-center w-20 h-20 m-4 rounded-full aspect-square bg-gray-200"
 					src="https://source.unsplash.com/featured/200x200"
 					alt=""
 				/>
@@ -73,7 +73,7 @@
 				</div>
 
 				<img
-					class="object-cover h-auto w-20 m-4 rounded-full"
+					class="object-cover object-center w-20 h-20 m-4 rounded-full aspect-square bg-gray-200"
 					src="https://source.unsplash.com/featured/200x200"
 					alt=""
 				/>
