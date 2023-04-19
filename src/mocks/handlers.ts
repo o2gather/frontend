@@ -5,8 +5,9 @@ import { ZodError } from 'zod';
 import { MessagePayloadSchema, type Message } from '../models/message';
 import { v4 as uuidv4 } from 'uuid';
 import { MemberPayloadSchema, type Member } from '../models/member';
+import { api } from '../api/api.client';
 
-rest.config.API_PREFIX = '/api/v1';
+rest.config.API_PREFIX = import.meta.env.VITE_API_PREFIX;
 
 const mockToken =
 	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4gRG9lIiwicGFzc3dvcmQiOjc3Nzc3fQ.rvPiI2N1yNgMlJRFR11y4BXBVGGEMn4ypRzfivWAhhA';
@@ -195,6 +196,9 @@ const userWithAuthorizationHandlers = [
 ];
 
 const eventHandlers = [
+	rest.define(api.getAllEvents, async (req, res, ctx) => {
+		return res(ctx.status(200), ctx.json(mockEvents));
+	}),
 	rest.post('/events', async (req, res, ctx) => {
 		try {
 			const eventPayload = EventPayloadSchema.parse(await req.json());
@@ -219,9 +223,6 @@ const eventHandlers = [
 				);
 			}
 		}
-	}),
-	rest.get('/events', async (req, res, ctx) => {
-		return res(ctx.status(200), ctx.json(mockEvents));
 	}),
 	rest.get('/events/:event_id', async (req, res, ctx) => {
 		const { event_id } = req.params;

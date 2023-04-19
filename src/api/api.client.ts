@@ -496,5 +496,23 @@ export type types = {
 };
 
 export function createApiClient(baseUrl: string, options?: ZodiosOptions) {
-	return new Zodios(baseUrl, endpoints, options);
+	const zodios = new Zodios(baseUrl, endpoints, options);
+
+	type newZodiosType = typeof zodios & {
+		[key in (typeof zodios.api)[number]['alias']]: (typeof zodios)[key] & {
+			path: string;
+			method: string;
+		};
+	};
+
+	for (const api of zodios.api) {
+		Object.assign(zodios[api.alias], {
+			path: api.path,
+			method: api.method
+		});
+	}
+
+	return zodios as newZodiosType;
 }
+
+export const api = createApiClient(import.meta.env.VITE_API_PREFIX);
