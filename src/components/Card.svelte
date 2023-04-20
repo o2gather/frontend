@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+
+	export let title: string;
+	export let description: string;
+	export let link: string;
 </script>
 
 <div
-	on:click={() => goto('/events/1')}
-	on:keypress={() => goto('/events/1')}
+	on:click={() => goto(link)}
+	on:keypress={() => goto(link)}
 	class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 cursor-pointer"
 >
 	<!-- <img
@@ -18,15 +22,14 @@
 			on:click|stopPropagation
 			on:keypress|stopPropagation
 		>
-			Noteworthy technology acquisitions 2021
+			{title}
 		</h5>
 		<p
 			class="mb-10 font-normal text-gray-600 dark:text-gray-400 cursor-auto line-clamp-2"
 			on:click|stopPropagation
 			on:keypress|stopPropagation
 		>
-			Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse
-			chronological order.
+			{description}
 		</p>
 		<div class="flex flex-row justify-between">
 			<div

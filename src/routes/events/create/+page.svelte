@@ -2,8 +2,9 @@
 	import { isoToDateTimeString } from '../../../utils';
 	import { superValidate, superForm } from 'sveltekit-superforms/client';
 	import { schemas } from '../../../api/api.client';
-	import { goto } from '$app/navigation';
 	import ErrorMessage from '../../../components/ErrorMessage.svelte';
+	import { api } from '../../../api';
+	import { goto } from '$app/navigation';
 
 	export let data;
 
@@ -28,17 +29,26 @@
 		<form
 			method="post"
 			class="grid grid-flow-row gap-4"
-			on:submit|preventDefault={() => {
-				superValidate($form, schemas.createEvent_Body).then((result) => {
-					$errors.name = result.errors.name;
+			on:submit|preventDefault={async () => {
+				const result = await superValidate($form, schemas.createEvent_Body);
+				if (!result.valid) {
+					$errors = result.errors;
+					return;
+				}
 
-					if (result.valid) {
-						goto('/events/1');
-					}
-				});
+				api
+					.createEvent($form)
+					.then((result) => {
+						goto(`/events/${result.id}`);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
 			}}
 		>
 			<div class="flex flex-col">
+				<ErrorMessage message={$errors.category && `A category must be selected.`} />
+
 				<div class="flex">
 					<label
 						for="search-dropdown"
@@ -89,7 +99,6 @@
 							{/each}
 						</ul>
 					</div>
-					<ErrorMessage message={$errors.category} />
 
 					<div class="relative w-full">
 						<input
@@ -228,9 +237,7 @@
 							id="default-search"
 							class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 							placeholder="Search Mockups, Logos..."
-							required
 							bind:value={$form.invited}
-							{...$constraints.invited}
 							on:input={() => {
 								superValidate($form, schemas.createEvent_Body).then((result) => {
 									$errors.invited = result.errors.invited;

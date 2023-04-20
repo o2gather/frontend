@@ -1,5 +1,9 @@
 <script>
 	import Card from '../components/Card.svelte';
+
+	export let data;
+
+	const { events } = data;
 </script>
 
 <div class="flex items-center justify-center mx-2 py-4 md:py-8 flex-wrap">
@@ -30,13 +34,7 @@
 	>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mx-6 md:mx-12 mb-12">
-	<Card />
-	<Card />
-	<Card />
-	<Card />
-	<Card />
-	<Card />
-	<Card />
-	<Card />
-	<Card />
+	{#each events as event (event.id)}
+		<Card title={event.name} description={event.description} link={`/events/${event.id}`} />
+	{/each}
 </div>

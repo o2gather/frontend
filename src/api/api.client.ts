@@ -25,7 +25,7 @@ const DefaultError = z.object({ message: z.string(), error_code: z.string().opti
 const createEvent_Body = z.object({
 	name: z.string().min(1),
 	description: z.string(),
-	category: z.string(),
+	category: z.string().min(1),
 	start_time: z.number(),
 	end_time: z.number(),
 	min_amount: z.number().gte(2),
@@ -514,5 +514,3 @@ export function createApiClient(baseUrl: string, options?: ZodiosOptions) {
 
 	return zodios as newZodiosType;
 }
-
-export const api = createApiClient(import.meta.env.VITE_API_PREFIX);

@@ -1,33 +1,27 @@
 import { rest } from 'mswx';
 import { AccountInfoSchema, UserPayloadSchema, UserSchema, type User } from '../models/user';
-import { EventPayloadSchema, EventSchema, type Event } from '../models/event';
+import { EventSchema, type Event } from '../models/event';
 import { ZodError } from 'zod';
 import { MessagePayloadSchema, type Message } from '../models/message';
 import { v4 as uuidv4 } from 'uuid';
 import { MemberPayloadSchema, type Member } from '../models/member';
-import { api } from '../api/api.client';
-
-rest.config.API_PREFIX = import.meta.env.VITE_API_PREFIX;
+import { api } from '../api';
+import { createAuthMiddleware } from './middlewares/AuthMiddleware';
+import { createDelayMiddleware } from './middlewares/DelayMiddleware';
+import { schemas, type types } from '../api/api.client';
+import { generateMock } from '@anatine/zod-mock';
 
 const mockToken =
 	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4gRG9lIiwicGFzc3dvcmQiOjc3Nzc3fQ.rvPiI2N1yNgMlJRFR11y4BXBVGGEMn4ypRzfivWAhhA';
+const AuthMiddleware = createAuthMiddleware(mockToken);
+const DelayMiddleware = createDelayMiddleware(500);
 
-const AuthMiddleware = rest.middleware((req, res, ctx, next) => {
-	const authorization = req.headers.get('Authorization');
-	if (authorization !== `Bearer ${mockToken}`) {
-		return res(
-			ctx.status(401),
-			ctx.json({
-				message: 'Unauthorized'
-			})
-		);
-	}
-
-	return next();
-});
+rest.config.API_PREFIX = import.meta.env.VITE_API_PREFIX;
 
 const mockUsers: User[] = [];
-const mockEvents: Event[] = [];
+const mockEvents: types['Event'][] = Array(10)
+	.fill(0)
+	.map(() => generateMock(schemas.Event));
 const mockMessages: Message[] = [];
 
 const userWithoutAuthorizationHandlers = [
@@ -188,7 +182,7 @@ const userWithAuthorizationHandlers = [
 		}
 
 		const events = mockEvents.filter((event) =>
-			event.members.map((member) => member.email).includes(user.email)
+			event.members?.map((member) => member.email).includes(user.email)
 		);
 
 		return res(ctx.status(200), ctx.json(events));
@@ -199,11 +193,11 @@ const eventHandlers = [
 	rest.define(api.getAllEvents, async (req, res, ctx) => {
 		return res(ctx.status(200), ctx.json(mockEvents));
 	}),
-	rest.post('/events', async (req, res, ctx) => {
+	rest.define(api.createEvent, async (req, res, ctx) => {
 		try {
-			const eventPayload = EventPayloadSchema.parse(await req.json());
+			const eventPayload = schemas.createEvent_Body.parse(await req.json());
 
-			const event: Event = {
+			const event: types['Event'] = {
 				id: uuidv4(),
 				...eventPayload,
 				members: []
@@ -211,7 +205,7 @@ const eventHandlers = [
 
 			mockEvents.push(event);
 
-			return res(ctx.status(201));
+			return res(ctx.status(200), ctx.json(event));
 		} catch (error) {
 			if (error instanceof ZodError) {
 				return res(
@@ -224,7 +218,7 @@ const eventHandlers = [
 			}
 		}
 	}),
-	rest.get('/events/:event_id', async (req, res, ctx) => {
+	rest.define(api.getEvent, async (req, res, ctx) => {
 		const { event_id } = req.params;
 
 		const event = mockEvents.find((event) => event.id === event_id);
@@ -322,7 +316,7 @@ const eventHandlers = [
 			phone: user.phone
 		};
 
-		event.members.push(member);
+		event.members?.push(member);
 
 		return res(ctx.status(200), ctx.json(event));
 	}),
@@ -343,7 +337,7 @@ const eventHandlers = [
 		// TODO: extract user info from token
 		const user = mockUsers[0];
 
-		const memberIndex = event.members.findIndex((member) => member.email === user.email);
+		const memberIndex = event.members?.findIndex((member) => member.email === user.email) as number;
 
 		if (memberIndex === -1) {
 			return res(
@@ -354,7 +348,7 @@ const eventHandlers = [
 			);
 		}
 
-		event.members.splice(memberIndex, 1);
+		event.members?.splice(memberIndex, 1);
 
 		return res(ctx.status(200));
 	}),
@@ -439,4 +433,4 @@ export const handlers = [
 	...userWithAuthorizationHandlers.map(AuthMiddleware),
 	...eventHandlers.map(AuthMiddleware),
 	...categoriesHandlers.map(AuthMiddleware)
-];
+].map(DelayMiddleware);

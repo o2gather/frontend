@@ -6,7 +6,7 @@
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
 	<div class="flex flex-wrap items-center justify-betwee mx-6 md:mx-36 my-6">
-		<a href="/" class="flex items-center grow">
+		<a href="/" class="flex items-center grow" data-sveltekit-preload-data="off">
 			<img
 				src="https://www.svgrepo.com/show/498281/people.svg"
 				class="h-8 mr-3"
