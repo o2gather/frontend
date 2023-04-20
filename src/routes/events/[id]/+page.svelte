@@ -16,7 +16,16 @@
 </script>
 
 <div class="mx-12 md:mx-36 mt-8 mb-12 flex flex-col gap-6">
-	<div class="font-bold text-4xl">{event.name}</div>
+	<div class="font-bold text-4xl flex items-center">
+		{event.name}
+		<div
+			class="inline-flex items-center px-3 py-2 text-sm font-medium text-center ml-4 text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 cursor-pointer"
+		>
+			Join
+
+			<img src="/plus.svg" class="w-4 h-4 ml-2 -mr-1" alt="plus" />
+		</div>
+	</div>
 
 	<div class="text-gray-400">
 		{startDate}
