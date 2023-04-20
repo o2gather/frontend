@@ -37,14 +37,14 @@
 			>
 				Read more
 
-				<img src="arrow.svg" class="w-4 h-4 ml-2 -mr-1" alt="arrow" />
+				<img src="/arrow.svg" class="w-4 h-4 ml-2 -mr-1" alt="arrow" />
 			</div>
 			<div
 				class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 			>
 				Join
 
-				<img src="plus.svg" class="w-4 h-4 ml-2 -mr-1" alt="plus" />
+				<img src="/plus.svg" class="w-4 h-4 ml-2 -mr-1" alt="plus" />
 			</div>
 		</div>
 	</div>
