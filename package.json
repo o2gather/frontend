@@ -31,6 +31,7 @@
 		"husky": "^8.0.3",
 		"lint-staged": "^13.2.0",
 		"msw": "^1.2.1",
+		"msw-auto-mock": "^0.13.0",
 		"mswx": "^0.4.0",
 		"postcss": "^8.4.21",
 		"prettier": "^2.8.7",

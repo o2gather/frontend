@@ -23,9 +23,9 @@ const Event = z.object({
 });
 const DefaultError = z.object({ message: z.string(), error_code: z.string().optional() });
 const createEvent_Body = z.object({
-	name: z.string().min(1),
+	name: z.string(),
 	description: z.string(),
-	category: z.string().min(1),
+	category: z.string(),
 	start_time: z.number(),
 	end_time: z.number(),
 	min_amount: z.number().gte(2),
@@ -66,6 +66,16 @@ const updateUserInfo_Body = z
 		phone: z.string().regex(/^09[0-9]{8}$/)
 	})
 	.partial();
+
+export type Event = z.infer<typeof Event>;
+export type DefaultError = z.infer<typeof DefaultError>;
+export type createEvent_Body = z.infer<typeof createEvent_Body>;
+export type updateEvent_Body = z.infer<typeof updateEvent_Body>;
+export type DefaultMsg = z.infer<typeof DefaultMsg>;
+export type EventMsg = z.infer<typeof EventMsg>;
+export type Category = z.infer<typeof Category>;
+export type User = z.infer<typeof User>;
+export type updateUserInfo_Body = z.infer<typeof updateUserInfo_Body>;
 
 export const schemas = {
 	Event,
@@ -491,26 +501,6 @@ const endpoints = makeApi([
 	}
 ]);
 
-export type types = {
-	[Key in keyof typeof schemas]: z.infer<(typeof schemas)[Key]>;
-};
-
 export function createApiClient(baseUrl: string, options?: ZodiosOptions) {
-	const zodios = new Zodios(baseUrl, endpoints, options);
-
-	type newZodiosType = typeof zodios & {
-		[key in (typeof zodios.api)[number]['alias']]: (typeof zodios)[key] & {
-			path: string;
-			method: string;
-		};
-	};
-
-	for (const api of zodios.api) {
-		Object.assign(zodios[api.alias], {
-			path: api.path,
-			method: api.method
-		});
-	}
-
-	return zodios as newZodiosType;
+	return new Zodios(baseUrl, endpoints, options);
 }
