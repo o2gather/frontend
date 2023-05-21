@@ -29,10 +29,6 @@ const NextMiddleware = restx.middleware((req, res, ctx, next) => {
 	return next();
 });
 
-const mockEvents: Event[] = Array(10)
-	.fill(0)
-	.map(() => generateMock(schemas.Event));
-
 rest.config.API_PREFIX = baseURL;
 export const handlers = [
 	rest.get(`/events`, (_, res, ctx) => {
@@ -53,10 +49,8 @@ export const handlers = [
 		return res(...resultArray[nextValue % resultArray.length]);
 	}),
 	rest.get(`/events/:eventId`, (req, res, ctx) => {
-		const { eventId } = req.params;
-
 		const resultArray = [
-			[ctx.status(200), ctx.json(getGetEvent200Response(eventId as string))],
+			[ctx.status(200), ctx.json(getGetEvent200Response())],
 			[ctx.status(404), ctx.json(getGetEvent404Response())],
 			[ctx.status(500), ctx.json(getGetEvent500Response())]
 		];
@@ -64,10 +58,8 @@ export const handlers = [
 		return res(...resultArray[nextValue % resultArray.length]);
 	}),
 	rest.patch(`/events/:eventId`, (req, res, ctx) => {
-		const { eventId } = req.params;
-
 		const resultArray = [
-			[ctx.status(200), ctx.json(getUpdateEvent200Response(eventId as string))],
+			[ctx.status(200), ctx.json(getUpdateEvent200Response())],
 			[ctx.status(400), ctx.json(getUpdateEvent400Response())],
 			[ctx.status(404), ctx.json(getUpdateEvent404Response())],
 			[ctx.status(500), ctx.json(getUpdateEvent500Response())]
@@ -176,7 +168,7 @@ export const handlers = [
 ].map(NextMiddleware);
 
 export function getGetAllEvents200Response() {
-	return mockEvents;
+	return new Array(10).fill(0).map(() => generateMock(schemas.Event));
 }
 
 export function getGetAllEvents500Response() {
@@ -187,9 +179,7 @@ export function getGetAllEvents500Response() {
 }
 
 export function getCreateEvent200Response() {
-	const event = generateMock(schemas.Event);
-	mockEvents.push(event);
-	return event;
+	return generateMock(schemas.Event);
 }
 
 export function getCreateEvent400Response() {
@@ -206,8 +196,8 @@ export function getCreateEvent500Response() {
 	};
 }
 
-export function getGetEvent200Response(eventId: string) {
-	return mockEvents.find((event) => event.id === eventId);
+export function getGetEvent200Response() {
+	return generateMock(schemas.Event);
 }
 
 export function getGetEvent404Response() {
@@ -224,14 +214,8 @@ export function getGetEvent500Response() {
 	};
 }
 
-export function getUpdateEvent200Response(eventId: string) {
-	const event = generateMock(schemas.Event);
-	mockEvents.splice(
-		mockEvents.findIndex((event) => event.id === eventId),
-		1,
-		event
-	);
-	return event;
+export function getUpdateEvent200Response() {
+	return generateMock(schemas.Event);
 }
 
 export function getUpdateEvent400Response() {
@@ -328,17 +312,9 @@ export function getLeaveEvent500Response() {
 }
 
 export function getGetEventMsgs200Response() {
-	return [...new Array(faker.datatype.number({ min: 1, max: MAX_ARRAY_LENGTH })).keys()].map(
-		(_) => ({
-			id: '訊息ID',
-			content: '訊息內容',
-			user: {
-				name: '使用者名稱',
-				avatar: 'https://example.com/avatar.png'
-			},
-			created_at: '1680153135'
-		})
-	);
+	return new Array(Math.floor(Math.random() * 10))
+		.fill(0)
+		.map(() => generateMock(schemas.EventMsg));
 }
 
 export function getGetEventMsgs404Response() {
@@ -356,15 +332,7 @@ export function getGetEventMsgs500Response() {
 }
 
 export function getCreateEventMsg200Response() {
-	return {
-		id: '訊息ID',
-		content: '訊息內容',
-		user: {
-			name: '使用者名稱',
-			avatar: 'https://example.com/avatar.png'
-		},
-		created_at: '1680153135'
-	};
+	return generateMock(schemas.EventMsg);
 }
 
 export function getCreateEventMsg400Response() {
