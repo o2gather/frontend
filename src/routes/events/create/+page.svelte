@@ -54,13 +54,15 @@
 						for="search-dropdown"
 						class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
 					/>
+
 					<button
 						id="dropdown-button"
 						on:click={() => (isDropdownOpen = !isDropdownOpen)}
 						on:keypress={() => (isDropdownOpen = !isDropdownOpen)}
 						class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 dark:border-gray-700 dark:text-white rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
 						type="button"
-						>{$form.category || 'All categories'}
+					>
+						{$form.category || 'All categories'}
 						<svg
 							aria-hidden="true"
 							class="w-4 h-4 ml-1"
@@ -72,8 +74,11 @@
 								d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
 								clip-rule="evenodd"
 							/></svg
-						></button
-					>
+						>
+						<select name="category" required class="pointer-events-none opacity-0">
+							<option value={$form.category}>{$form.category}</option>
+						</select>
+					</button>
 					<div
 						class="absolute translate-y-[50px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
 						class:hidden={!isDropdownOpen}
