@@ -1,0 +1,820 @@
+openapi: 3.0.0
+info:
+  description: 揪團
+  version: 1.0.0
+  title: o2gather
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: user
+    description: 使用者相關
+  - name: event
+    description: 團購相關
+  - name: category
+    description: 類別相關
+paths:
+  /events:
+    get:
+      tags:
+        - event
+      description: 取得所有團購
+      operationId: getAllEvents
+      parameters:
+        - name: category
+          in: query
+          description: values that need to be considered for filter
+          required: false
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: values that need to be considered for filter
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+    post:
+      tags:
+        - event
+      description: 新增團購
+      operationId: createEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 團購名稱
+                  example: 團購名稱
+                description:
+                  type: string
+                  description: 團購描述
+                  example: 團購描述
+                category:
+                  type: string
+                  description: 團購類別
+                  example: 團購類別
+                start_time:
+                  type: number
+                  format: int32
+                  description: 團購開始時間
+                  example: '1680153135'
+                end_time:
+                  type: number
+                  format: int32
+                  description: 團購結束時間
+                  example: '1680153140'
+                min_amount:
+                  type: number
+                  format: int64
+                  description: 最少數量
+                  minimum: 2
+                  example: '2'
+                max_amount:
+                  type: number
+                  format: int64
+                  description: 最多數量
+                  minimum: 2
+                  example: '2'
+              required:
+                - name
+                - description
+                - category
+                - start_time
+                - end_time
+                - min_amount
+                - max_amount
+                - invited
+        description: 新增團購
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '403':
+          description: Permission Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  '/events/{event_id}':
+    get:
+      tags:
+        - event
+      description: 取得團購
+      operationId: getEvent
+      parameters:
+        - name: event_id
+          in: path
+          description: 團購ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+    patch:
+      tags:
+        - event
+      description: 更新團購
+      operationId: updateEvent
+      parameters:
+        - name: event_id
+          in: path
+          description: 團購ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 團購名稱
+                  example: 團購名稱
+                description:
+                  type: string
+                  description: 團購描述
+                  example: 團購描述
+                category:
+                  type: string
+                  description: 團購類別
+                  example: 團購類別
+                start_time:
+                  type: number
+                  format: int32
+                  description: 團購開始時間
+                  example: '1680153135'
+                end_time:
+                  type: number
+                  format: int32
+                  description: 團購結束時間
+                  example: '1680153140'
+                min_amount:
+                  type: number
+                  format: int64
+                  description: 最少數量
+                  minimum: 2
+                  example: '2'
+                max_amount:
+                  type: number
+                  format: int64
+                  description: 最多數量
+                  minimum: 2
+                  example: '2'
+              required:
+                - name
+                - description
+                - category
+                - start_time
+                - end_time
+                - min_people
+                - max_people
+        description: 更新團購
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+    delete:
+      tags:
+        - event
+      description: 刪除團購
+      operationId: deleteEvent
+      parameters:
+        - name: event_id
+          in: path
+          description: 團購ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultMsg'
+        '403':
+          description: Permission Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  '/events/{event_id}/join':
+    put:
+      tags:
+        - event
+      description: 加入團購
+      operationId: joinEvent
+      parameters:
+        - name: event_id
+          in: path
+          description: 團購ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: int64
+                  description: 購買數量
+                  minimum: 1
+                  example: '1'
+              required:
+                - amount
+        description: 加入團購
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultMsg'
+        '400':
+          description: Owning event or Has joined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '403':
+          description: Permission Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  '/events/{event_id}/leave':
+    post:
+      tags:
+        - event
+      description: 離開團購
+      operationId: leaveEvent
+      parameters:
+        - name: event_id
+          in: path
+          description: 團購ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultMsg'
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  '/events/{event_id}/msgs':
+    get:
+      tags:
+        - event
+      description: 取得團購的公告
+      operationId: getEventMsgs
+      parameters:
+        - name: event_id
+          in: path
+          description: 團購ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventMsg'
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+    post:
+      tags:
+        - event
+      description: 新增團購的公告
+      operationId: createEventMsg
+      parameters:
+        - name: event_id
+          in: path
+          description: 團購ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: 訊息內容
+                  example: 訊息內容
+              required:
+                - content
+        description: 新增團購訊息
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventMsg'
+        '403':
+          description: Permission Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  /categories:
+    get:
+      tags:
+        - category
+      description: 取得所有類別
+      operationId: getCategories
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  schema:
+                    type: string
+                    description: 類別名稱
+                    example: 類別名稱
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  /login:
+    post:
+      tags:
+        - user
+      description: 導向至 https://accounts.google.com/o/oauth2/v2/auth 取得同意授權後，取得ID、姓名
+      operationId: Login
+      responses:
+        '303':
+          description: redirect to homepage
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  /logout:
+    post:
+      tags:
+        - user
+      description: 登出
+      operationId: Logout
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultMsg'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  '/users/{user_id}':
+    get:
+      tags:
+        - user
+      description: 取得使用者的基本資料
+      operationId: getUserInfo
+      parameters:
+        - name: user_id
+          in: path
+          description: 使用者ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Permission Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+    patch:
+      tags:
+        - user
+      description: 更新基本資料
+      operationId: updateUserInfo
+      parameters:
+        - name: user_id
+          in: path
+          description: 使用者ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  description: avatar path
+                name:
+                  type: string
+                  description: 使用者名稱
+                email:
+                  type: string
+                  format: email
+                  description: avatar path
+                phone:
+                  type: string
+                  pattern: ^09[0-9]{8}$
+                  description: phone number
+        description: user info to be updated
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Permission Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+  '/users/{user_id}/events':
+    get:
+      tags:
+        - user
+      description: 取得使用者的團購
+      operationId: getUserEvents
+      parameters:
+        - name: user_id
+          in: path
+          description: 使用者ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultError'
+servers:
+  - url: https://o2gather.ptass.org/api/v1
+components:
+  schemas:
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+          description: 發起者ID
+        name:
+          type: string
+          description: 團購名稱
+          example: 團購名稱
+        description:
+          type: string
+          description: 團購描述
+          example: 團購描述
+        category:
+          type: string
+          description: 團購類別
+          example: 團購類別
+        start_time:
+          type: number
+          format: int32
+          description: 團購開始時間
+          example: '1680153135'
+        end_time:
+          type: number
+          format: int32
+          description: 團購結束時間
+          example: '1680153140'
+        min_amount:
+          type: number
+          format: int64
+          description: 最少數量
+          minimum: 2
+          example: '2'
+        max_amount:
+          type: number
+          format: int64
+          description: 最多數量
+          minimum: 2
+          example: '2'
+        amount:
+          type: number
+          format: int64
+          description: 已參加數量
+          minimum: 0
+          example: '0'
+        members:
+          type: array
+          description: 已參加的成員（含發起者）清單（只限發起者可以看到）
+          items:
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+                format: email
+              phone:
+                type: string
+                pattern: ^09[0-9]{8}$
+              amount:
+                type: number
+                format: int32
+                example: '1'
+            required:
+              - name
+              - email
+              - phone
+              - amount
+      required:
+        - id
+        - name
+        - description
+        - category
+        - start_time
+        - end_time
+        - min_amount
+        - max_amount
+        - amount
+    EventMsg:
+      type: object
+      properties:
+        content:
+          type: string
+          description: 訊息內容
+          example: 訊息內容
+        user:
+          type: object
+          description: 發送者
+          properties:
+            name:
+              type: string
+              description: 使用者名稱
+              example: 使用者名稱
+            avatar:
+              type: string
+              format: url
+              description: 使用者頭像
+              example: https://example.com/avatar.png
+          required:
+            - name
+            - avatar
+        created_at:
+          type: number
+          format: int32
+          description: 訊息建立時間
+          example: '1680153135'
+      required:
+        - id
+        - content
+        - created_at
+    Category:
+      type: string
+    DefaultMsg:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 訊息
+          example: success
+        message_code:
+          type: string
+          description: 訊息代碼
+          example: message_code
+      required:
+        - message
+    DefaultError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: 錯誤訊息
+          example: error occur
+        error_code:
+          type: string
+          description: 錯誤代碼
+          example: error_code
+      required:
+        - message
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        avatar:
+          type: string
+          format: url
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          pattern: ^09[0-9]{8}$

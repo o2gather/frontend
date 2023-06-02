@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 const Event = z.object({
 	id: z.string().uuid(),
+	user_id: z.string().uuid().optional(),
 	name: z.string(),
 	description: z.string(),
 	category: z.string(),
@@ -10,6 +11,7 @@ const Event = z.object({
 	end_time: z.number(),
 	min_amount: z.number().gte(2),
 	max_amount: z.number().gte(2),
+	amount: z.number().gte(0),
 	members: z
 		.array(
 			z.object({
@@ -29,8 +31,7 @@ const createEvent_Body = z.object({
 	start_time: z.number(),
 	end_time: z.number(),
 	min_amount: z.number().gte(2),
-	max_amount: z.number().gte(2),
-	invited: z.array(z.string())
+	max_amount: z.number().gte(2)
 });
 const updateEvent_Body = z.object({
 	name: z.string(),
@@ -38,17 +39,15 @@ const updateEvent_Body = z.object({
 	category: z.string(),
 	start_time: z.number(),
 	end_time: z.number(),
-	min_people: z.number().gte(2),
-	max_people: z.number().gte(2)
+	min_amount: z.number().gte(2).optional(),
+	max_amount: z.number().gte(2).optional()
 });
 const DefaultMsg = z.object({ message: z.string(), message_code: z.string().optional() });
 const EventMsg = z.object({
-	id: z.string(),
 	content: z.string(),
 	user: z.object({ name: z.string(), avatar: z.string() }).optional(),
 	created_at: z.number()
 });
-const Category = z.string();
 const User = z
 	.object({
 		id: z.string().uuid(),
@@ -73,7 +72,6 @@ export type createEvent_Body = z.infer<typeof createEvent_Body>;
 export type updateEvent_Body = z.infer<typeof updateEvent_Body>;
 export type DefaultMsg = z.infer<typeof DefaultMsg>;
 export type EventMsg = z.infer<typeof EventMsg>;
-export type Category = z.infer<typeof Category>;
 export type User = z.infer<typeof User>;
 export type updateUserInfo_Body = z.infer<typeof updateUserInfo_Body>;
 
@@ -84,7 +82,6 @@ export const schemas = {
 	updateEvent_Body,
 	DefaultMsg,
 	EventMsg,
-	Category,
 	User,
 	updateUserInfo_Body
 };
@@ -96,7 +93,7 @@ const endpoints = makeApi([
 		alias: 'getCategories',
 		description: `取得所有類別`,
 		requestFormat: 'json',
-		response: z.array(Category),
+		response: z.array(z.unknown()),
 		errors: [
 			{
 				status: 500,
@@ -154,6 +151,11 @@ const endpoints = makeApi([
 				schema: DefaultError
 			},
 			{
+				status: 403,
+				description: `Permission Denied`,
+				schema: DefaultError
+			},
+			{
 				status: 500,
 				description: `Internal Server Error`,
 				schema: DefaultError
@@ -162,13 +164,13 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'get',
-		path: '/events/:event_id',
+		path: '/events/:eventId',
 		alias: 'getEvent',
 		description: `取得團購`,
 		requestFormat: 'json',
 		parameters: [
 			{
-				name: 'event_id',
+				name: 'eventId',
 				type: 'Path',
 				schema: z.string()
 			}
@@ -189,7 +191,7 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'patch',
-		path: '/events/:event_id',
+		path: '/events/:eventId',
 		alias: 'updateEvent',
 		description: `更新團購`,
 		requestFormat: 'json',
@@ -201,7 +203,7 @@ const endpoints = makeApi([
 				schema: updateEvent_Body
 			},
 			{
-				name: 'event_id',
+				name: 'eventId',
 				type: 'Path',
 				schema: z.string()
 			}
@@ -227,19 +229,24 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'delete',
-		path: '/events/:event_id',
+		path: '/events/:eventId',
 		alias: 'deleteEvent',
 		description: `刪除團購`,
 		requestFormat: 'json',
 		parameters: [
 			{
-				name: 'event_id',
+				name: 'eventId',
 				type: 'Path',
 				schema: z.string()
 			}
 		],
 		response: DefaultMsg,
 		errors: [
+			{
+				status: 403,
+				description: `Permission Denied`,
+				schema: DefaultError
+			},
 			{
 				status: 404,
 				description: `Event not found`,
@@ -254,7 +261,7 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'put',
-		path: '/events/:event_id/join',
+		path: '/events/:eventId/join',
 		alias: 'joinEvent',
 		description: `加入團購`,
 		requestFormat: 'json',
@@ -266,13 +273,23 @@ const endpoints = makeApi([
 				schema: z.object({ amount: z.number().gte(1) })
 			},
 			{
-				name: 'event_id',
+				name: 'eventId',
 				type: 'Path',
 				schema: z.string()
 			}
 		],
-		response: Event,
+		response: DefaultMsg,
 		errors: [
+			{
+				status: 400,
+				description: `Owning event or Has joined`,
+				schema: DefaultError
+			},
+			{
+				status: 403,
+				description: `Permission Denied`,
+				schema: DefaultError
+			},
 			{
 				status: 404,
 				description: `Event not found`,
@@ -287,13 +304,13 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'post',
-		path: '/events/:event_id/leave',
+		path: '/events/:eventId/leave',
 		alias: 'leaveEvent',
 		description: `離開團購`,
 		requestFormat: 'json',
 		parameters: [
 			{
-				name: 'event_id',
+				name: 'eventId',
 				type: 'Path',
 				schema: z.string()
 			}
@@ -314,13 +331,13 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'get',
-		path: '/events/:event_id/msgs',
+		path: '/events/:eventId/msgs',
 		alias: 'getEventMsgs',
 		description: `取得團購的公告`,
 		requestFormat: 'json',
 		parameters: [
 			{
-				name: 'event_id',
+				name: 'eventId',
 				type: 'Path',
 				schema: z.string()
 			}
@@ -341,7 +358,7 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'post',
-		path: '/events/:event_id/msgs',
+		path: '/events/:eventId/msgs',
 		alias: 'createEventMsg',
 		description: `新增團購的公告`,
 		requestFormat: 'json',
@@ -353,16 +370,16 @@ const endpoints = makeApi([
 				schema: z.object({ content: z.string() })
 			},
 			{
-				name: 'event_id',
+				name: 'eventId',
 				type: 'Path',
 				schema: z.string()
 			}
 		],
-		response: EventMsg,
+		response: z.array(EventMsg),
 		errors: [
 			{
-				status: 400,
-				description: `Invalid body`,
+				status: 403,
+				description: `Permission Denied`,
 				schema: DefaultError
 			},
 			{
@@ -386,9 +403,24 @@ const endpoints = makeApi([
 		response: z.void(),
 		errors: [
 			{
+				status: 303,
+				description: `redirect to homepage`,
+				schema: z.void()
+			},
+			{
+				status: 401,
+				description: `Unauthorized`,
+				schema: DefaultError
+			},
+			{
+				status: 409,
+				description: `Conflict`,
+				schema: DefaultError
+			},
+			{
 				status: 500,
 				description: `Internal Server Error`,
-				schema: z.void()
+				schema: DefaultError
 			}
 		]
 	},
@@ -398,7 +430,7 @@ const endpoints = makeApi([
 		alias: 'Logout',
 		description: `登出`,
 		requestFormat: 'json',
-		response: z.void(),
+		response: DefaultMsg,
 		errors: [
 			{
 				status: 500,
@@ -409,13 +441,13 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'get',
-		path: '/users/:user_id',
+		path: '/users/:userId',
 		alias: 'getUserInfo',
 		description: `取得使用者的基本資料`,
 		requestFormat: 'json',
 		parameters: [
 			{
-				name: 'user_id',
+				name: 'userId',
 				type: 'Path',
 				schema: z.string()
 			}
@@ -423,8 +455,8 @@ const endpoints = makeApi([
 		response: User,
 		errors: [
 			{
-				status: 404,
-				description: `User not found`,
+				status: 403,
+				description: `Permission Denied`,
 				schema: DefaultError
 			},
 			{
@@ -436,7 +468,7 @@ const endpoints = makeApi([
 	},
 	{
 		method: 'patch',
-		path: '/users/:user_id',
+		path: '/users/:userId',
 		alias: 'updateUserInfo',
 		description: `更新基本資料`,
 		requestFormat: 'json',
@@ -448,7 +480,7 @@ const endpoints = makeApi([
 				schema: updateUserInfo_Body
 			},
 			{
-				name: 'user_id',
+				name: 'userId',
 				type: 'Path',
 				schema: z.string()
 			}
@@ -456,31 +488,26 @@ const endpoints = makeApi([
 		response: User,
 		errors: [
 			{
-				status: 400,
-				description: `Invalid body`,
-				schema: DefaultError
-			},
-			{
 				status: 403,
 				description: `Permission Denied`,
 				schema: DefaultError
 			},
 			{
-				status: 404,
-				description: `User not found`,
+				status: 500,
+				description: `Internal Server Error`,
 				schema: DefaultError
 			}
 		]
 	},
 	{
 		method: 'get',
-		path: '/users/:user_id/events',
+		path: '/users/:userId/events',
 		alias: 'getUserEvents',
 		description: `取得使用者的團購`,
 		requestFormat: 'json',
 		parameters: [
 			{
-				name: 'user_id',
+				name: 'userId',
 				type: 'Path',
 				schema: z.string()
 			}
