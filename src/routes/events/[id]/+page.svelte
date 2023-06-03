@@ -50,7 +50,7 @@
 			class="flex flex-col items-center h-[calc(100vh-500px)] overflow-y-scroll"
 			bind:this={messageDiv}
 		>
-			{#each messages as message (message.id)}
+			{#each messages as message}
 				<div
 					class="flex items-center bg-white border border-gray-200 my-2 rounded-lg shadow w-full md:flex-row md:max-w-3xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
 				>
@@ -85,12 +85,12 @@
 							},
 							{
 								params: {
-									event_id: event.id
+									eventId: event.id
 								}
 							}
 						)
 						.then(async (result) => {
-							messages = [...messages, result];
+							messages.concat(result);
 							await tick();
 							messageDiv.scrollTop = messageDiv.scrollHeight;
 						})

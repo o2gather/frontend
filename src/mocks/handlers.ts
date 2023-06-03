@@ -24,7 +24,8 @@ const NextMiddleware = rest.middleware((req, res, ctx, next) => {
 	if (!nexts[pathname]) {
 		nexts[pathname] = 0;
 	}
-	nextValue = nexts[pathname]++;
+	// nextValue = nexts[pathname]++;
+	nextValue = 0;
 	return next();
 });
 
