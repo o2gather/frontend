@@ -3,7 +3,10 @@
 
 	export let data;
 
-	const { events } = data;
+	const { events, categories } = data;
+
+	console.log(events);
+	console.log(categories);
 </script>
 
 <div class="flex items-center justify-center mx-2 py-4 md:py-8 flex-wrap">

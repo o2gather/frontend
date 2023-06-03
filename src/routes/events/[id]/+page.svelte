@@ -90,7 +90,7 @@
 							}
 						)
 						.then(async (result) => {
-							messages.concat(result);
+							messages = [...messages, ...result];
 							await tick();
 							messageDiv.scrollTop = messageDiv.scrollHeight;
 						})
