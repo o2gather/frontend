@@ -9,42 +9,39 @@
 <div
 	on:click={() => goto(link)}
 	on:keypress={() => goto(link)}
-	class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 cursor-pointer"
+	class="h-full cursor-pointer rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800"
 >
-	<!-- <img
-		class="rounded-t-lg object-cover object-center w-full h-48 bg-gray-200"
-		src="https://source.unsplash.com/featured/200x200"
-		alt=""
-	/> -->
-	<div class="p-8">
+	<div class="flex h-full flex-col p-8">
 		<h5
-			class="mb-8 text-2xl font-bold tracking-tight text-gray-900 dark:text-white cursor-auto"
+			class="mb-8 cursor-auto text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
 			on:click|stopPropagation
 			on:keypress|stopPropagation
 		>
 			{title}
 		</h5>
 		<p
-			class="mb-10 font-normal text-gray-600 dark:text-gray-400 cursor-auto line-clamp-2"
+			class="mb-10 line-clamp-2 grow cursor-auto font-normal text-gray-600 dark:text-gray-400"
 			on:click|stopPropagation
 			on:keypress|stopPropagation
 		>
 			{description}
 		</p>
-		<div class="flex flex-row justify-between">
+		<div class="flex flex-wrap justify-end gap-y-2">
 			<div
-				class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+				class="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 			>
 				Read more
 
-				<img src="/arrow.svg" class="w-4 h-4 ml-2 -mr-1" alt="arrow" />
+				<img src="/arrow.svg" class="-mr-1 ml-2 h-4 w-4" alt="arrow" />
 			</div>
-			<div
-				class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-			>
-				Join
+			<div class="grow text-right">
+				<div
+					class="inline-flex items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+				>
+					Join
 
-				<img src="/plus.svg" class="w-4 h-4 ml-2 -mr-1" alt="plus" />
+					<img src="/plus.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
+				</div>
 			</div>
 		</div>
 	</div>

@@ -1,10 +1,10 @@
 import { superValidate } from 'sveltekit-superforms/server';
 import { schemas } from '../../../api/api.client';
+import { api } from '../../../api';
 
 export const load = async () => {
-	const form = await superValidate(schemas.createEvent_Body);
-
 	return {
-		form
+		form: await superValidate(schemas.createEvent_Body),
+		categories: await api.getCategories()
 	};
 };

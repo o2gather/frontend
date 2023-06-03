@@ -4,15 +4,15 @@
 	let isMenuOpen = false;
 </script>
 
-<nav class="bg-white border-gray-200 dark:bg-gray-900">
-	<div class="flex flex-wrap items-center justify-betwee mx-6 md:mx-36 my-6">
-		<a href="/" class="flex items-center grow" data-sveltekit-preload-data="off">
+<nav class="border-gray-200 bg-white dark:bg-gray-900">
+	<div class="justify-betwee mx-6 my-6 flex flex-wrap items-center md:mx-36">
+		<a href="/" class="flex grow items-center" data-sveltekit-preload-data="off">
 			<img
 				src="https://www.svgrepo.com/show/498281/people.svg"
-				class="h-8 mr-3"
+				class="mr-3 h-8"
 				alt="Flowbite Logo"
 			/>
-			<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
+			<span class="self-center whitespace-nowrap text-2xl font-semibold dark:text-white"
 				>O2Gather</span
 			>
 		</a>
@@ -21,13 +21,13 @@
 				isMenuOpen = !isMenuOpen;
 			}}
 			type="button"
-			class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+			class="ml-3 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 md:hidden"
 			aria-controls="navbar-default"
 			aria-expanded="false"
 		>
 			<span class="sr-only">Open main menu</span>
 			<svg
-				class="w-6 h-6"
+				class="h-6 w-6"
 				aria-hidden="true"
 				fill="currentColor"
 				viewBox="0 0 20 20"
@@ -41,19 +41,19 @@
 		</button>
 		<div class="w-full md:block md:w-auto" id="navbar-default" class:hidden={!isMenuOpen}>
 			<ul
-				class="font-medium flex flex-col items-center p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
+				class="mt-4 flex flex-col items-center rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium dark:border-gray-700 dark:bg-gray-800 md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:p-0 md:dark:bg-gray-900"
 			>
 				<li>
 					<a
 						href="/"
-						class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+						class="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
 						aria-current="page">Preparing</a
 					>
 				</li>
 				<li>
 					<a
 						href="/"
-						class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+						class="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
 						>Joined</a
 					>
 				</li>
@@ -61,11 +61,11 @@
 					<div
 						on:click={() => goto('/events/create')}
 						on:keypress={() => goto('/events/create')}
-						class="inline-flex items-center px-3 cursor-pointer py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 					>
 						Create Event
 
-						<img src="/plus.svg" class="w-4 h-4 ml-2 -mr-1" alt="plus" />
+						<img src="/plus.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
 					</div>
 				</li>
 			</ul>

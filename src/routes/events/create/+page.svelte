@@ -11,7 +11,6 @@
 	const { form, errors, constraints } = superForm(data.form);
 
 	let isDropdownOpen = false;
-	let categories = ['Shopping', 'Images', 'News', 'Finance'];
 
 	let startTime = isoToDateTimeString(new Date().getTime());
 	let endTime = isoToDateTimeString(new Date().getTime());
@@ -20,12 +19,12 @@
 	$: $form.end_time = new Date(endTime).getTime();
 </script>
 
-<div class="mx-12 md:mx-36 mt-8 mb-12 flex flex-col gap-6">
-	<div class="font-bold text-4xl">Create Event</div>
+<div class="mx-12 mb-12 mt-8 flex flex-col gap-6 md:mx-36">
+	<div class="text-4xl font-bold">Create Event</div>
 
 	<hr />
 
-	<div class="leading-8 mt-4">
+	<div class="mt-4 leading-8">
 		<form
 			method="post"
 			class="grid grid-flow-row gap-4"
@@ -52,20 +51,20 @@
 				<div class="flex">
 					<label
 						for="search-dropdown"
-						class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+						class="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
 					/>
 
 					<button
 						id="dropdown-button"
 						on:click={() => (isDropdownOpen = !isDropdownOpen)}
 						on:keypress={() => (isDropdownOpen = !isDropdownOpen)}
-						class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 dark:border-gray-700 dark:text-white rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+						class="z-10 inline-flex flex-shrink-0 items-center rounded-l-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-700 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800"
 						type="button"
 					>
 						{$form.category || 'All categories'}
 						<svg
 							aria-hidden="true"
-							class="w-4 h-4 ml-1"
+							class="ml-1 h-4 w-4"
 							fill="currentColor"
 							viewBox="0 0 20 20"
 							xmlns="http://www.w3.org/2000/svg"
@@ -80,16 +79,16 @@
 						</select>
 					</button>
 					<div
-						class="absolute translate-y-[50px] z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+						class="absolute z-10 w-44 translate-y-[50px] divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
 						class:hidden={!isDropdownOpen}
 					>
 						<ul
 							class="py-2 text-sm text-gray-700 dark:text-gray-200"
 							aria-labelledby="dropdown-button"
 						>
-							{#each categories as category (category)}
+							{#each data.categories as category (category)}
 								<li
-									class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+									class="block cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 									on:click={() => {
 										$form.category = category;
 										isDropdownOpen = false;
@@ -109,7 +108,7 @@
 						<input
 							type="text"
 							id="search-dropdown"
-							class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg border-l-gray-100 border-l-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+							class="z-20 block w-full rounded-r-lg border border-l-2 border-gray-300 border-l-gray-100 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500"
 							placeholder="Event name"
 							required
 							bind:value={$form.name}
@@ -128,11 +127,11 @@
 
 			<div class="grid gap-6 md:grid-cols-2">
 				<div>
-					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+					<label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
 						>Min amount
 						<input
 							type="number"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
 							placeholder="Min amount"
 							required
 							bind:value={$form.min_amount}
@@ -148,11 +147,11 @@
 					</label>
 				</div>
 				<div>
-					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+					<label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
 						>Max amount
 						<input
 							type="number"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
 							placeholder="Max amount"
 							required
 							bind:value={$form.max_amount}
@@ -168,11 +167,11 @@
 				</div>
 
 				<div>
-					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+					<label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
 						>Start time
 						<input
 							type="datetime-local"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
 							placeholder="Start time"
 							required
 							bind:value={startTime}
@@ -186,11 +185,11 @@
 					</label>
 				</div>
 				<div>
-					<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+					<label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
 						>End time
 						<input
 							type="datetime-local"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
 							placeholder="End time"
 							required
 							bind:value={endTime}
@@ -206,21 +205,21 @@
 			</div>
 
 			<div>
-				<label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+				<label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
 					>Description
 					<textarea
 						rows="4"
-						class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
 						placeholder="Write your thoughts here..."
 						bind:value={$form.description}
 					/>
 				</label>
 			</div>
 
-			<div class="flex justify-end mt-6">
+			<div class="mt-6 flex justify-end">
 				<button
 					type="submit"
-					class=" w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+					class=" w-full rounded-lg bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 					>Create</button
 				>
 			</div>

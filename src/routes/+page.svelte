@@ -1,43 +1,38 @@
-<script>
+<script lang="ts">
 	import Card from '../components/Card.svelte';
 
 	export let data;
 
 	const { events, categories } = data;
 
-	console.log(events);
-	console.log(categories);
+	let selectedCategory: string | null = null;
+	$: filteredEvents = events.filter(
+		(event) => selectedCategory === null || event.category === selectedCategory
+	);
 </script>
 
-<div class="flex items-center justify-center mx-2 py-4 md:py-8 flex-wrap">
+<div class="mx-2 flex flex-wrap items-center justify-center py-4 md:py-8">
 	<button
 		type="button"
-		class="text-blue-700 hover:text-white border border-blue-600 bg-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-full text-base font-medium px-5 py-2.5 text-center mr-3 mb-3 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:bg-gray-900 dark:focus:ring-blue-800"
-		>All categories</button
+		class="{selectedCategory === null
+			? 'border-blue-600 text-blue-700'
+			: 'border-white text-gray-900'} mb-3 mr-3 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:bg-gray-900 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:focus:ring-blue-800"
+		on:click={() => (selectedCategory = null)}>All categories</button
 	>
-	<button
-		type="button"
-		class="text-gray-900 border border-white hover:border-gray-200 dark:border-gray-900 dark:bg-gray-900 dark:hover:border-gray-700 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-base font-medium px-5 py-2.5 text-center mr-3 mb-3 dark:text-white dark:focus:ring-gray-800"
-		>Shoes</button
-	>
-	<button
-		type="button"
-		class="text-gray-900 border border-white hover:border-gray-200 dark:border-gray-900 dark:bg-gray-900 dark:hover:border-gray-700 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-base font-medium px-5 py-2.5 text-center mr-3 mb-3 dark:text-white dark:focus:ring-gray-800"
-		>Bags</button
-	>
-	<button
-		type="button"
-		class="text-gray-900 border border-white hover:border-gray-200 dark:border-gray-900 dark:bg-gray-900 dark:hover:border-gray-700 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-base font-medium px-5 py-2.5 text-center mr-3 mb-3 dark:text-white dark:focus:ring-gray-800"
-		>Electronics</button
-	>
-	<button
-		type="button"
-		class="text-gray-900 border border-white hover:border-gray-200 dark:border-gray-900 dark:bg-gray-900 dark:hover:border-gray-700 bg-white focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-base font-medium px-5 py-2.5 text-center mr-3 mb-3 dark:text-white dark:focus:ring-gray-800"
-		>Gaming</button
-	>
+	{#each categories as category}
+		<button
+			type="button"
+			class="{selectedCategory === category
+				? 'border-blue-600 text-blue-700'
+				: 'border-white text-gray-900'} mb-3 mr-3 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:bg-gray-900 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:focus:ring-blue-800"
+			on:click={() => (selectedCategory = category)}
+		>
+			{category}
+		</button>
+	{/each}
 </div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mx-6 md:mx-12 mb-12">
-	{#each events as event (event.id)}
+<div class="mx-6 mb-12 grid grid-cols-1 gap-6 md:mx-12 md:grid-cols-3">
+	{#each filteredEvents as event (event.id)}
 		<Card title={event.name} description={event.description} link={`/events/${event.id}`} />
 	{/each}
 </div>
