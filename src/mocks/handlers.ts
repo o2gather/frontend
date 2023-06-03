@@ -29,7 +29,7 @@ const NextMiddleware = rest.middleware((req, res, ctx, next) => {
 	return next();
 });
 
-rest.config.API_PREFIX = 'http://localhost:8000/api/v1';
+rest.config.API_PREFIX = 'https://o2gather.ptass.org/api/v1';
 export const handlers = [
 	rest.get(`/events`, (_, res, ctx) => {
 		const resultArray = [

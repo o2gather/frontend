@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { api } from '../../../api';
 	import { isoToDateTimeString } from './../../../utils';
 	import { onMount, tick } from 'svelte';
+	import Swal from 'sweetalert2';
 
 	let messageDiv: HTMLDivElement;
 	let comment: string;
@@ -15,17 +17,86 @@
 
 	$: startDate = isoToDateTimeString(event.start_time);
 	$: endDate = isoToDateTimeString(event.end_time);
+	$: console.log(event);
 </script>
 
-<div class="mx-12 md:mx-36 mt-8 mb-12 flex flex-col gap-6">
-	<div class="font-bold text-4xl flex items-center">
-		{event.name}
-		<div
-			class="inline-flex items-center px-3 py-2 text-sm font-medium text-center ml-4 text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 cursor-pointer"
-		>
-			Join
+<div class="mx-12 mb-12 mt-8 flex flex-col gap-6 md:mx-36">
+	<div class="flex items-center justify-between text-4xl font-bold">
+		<div class="flex items-center">
+			{event.name}
+			<button
+				class="ml-4 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+				on:click={() => {
+					api
+						.joinEvent(
+							{
+								amount: 1
+							},
+							{
+								params: {
+									eventId: event.id
+								}
+							}
+						)
+						.then((res) => {
+							console.log(res);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}}
+			>
+				Join
 
-			<img src="/plus.svg" class="w-4 h-4 ml-2 -mr-1" alt="plus" />
+				<img src="/plus.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
+			</button>
+		</div>
+		<div>
+			<a
+				class="ml-4 inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+				href={`/events/${event.id}/edit`}
+			>
+				Edit
+			</a>
+			<button
+				type="button"
+				class="mb-2 mr-2 rounded-lg bg-red-700 px-3 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+				on:click={() => {
+					Swal.fire({
+						title: 'Delete Event',
+						text: 'Are you sure you want to delete this event?',
+						icon: 'question',
+						confirmButtonText: 'Yes',
+						confirmButtonColor: 'rgb(185 28 28)',
+						cancelButtonText: 'No',
+						showCancelButton: true
+					}).then((result) => {
+						if (result.isConfirmed) {
+							api
+								.deleteEvent(undefined, {
+									params: {
+										eventId: event.id
+									}
+								})
+								.then(async () => {
+									await tick();
+									Swal.fire({
+										title: 'Deleted!',
+										text: 'Your event has been deleted.',
+										icon: 'success',
+										confirmButtonText: 'OK'
+									});
+									goto('/');
+								})
+								.catch((err) => {
+									console.log(err);
+								});
+						}
+					});
+				}}
+			>
+				Delete
+			</button>
 		</div>
 	</div>
 
@@ -39,29 +110,29 @@
 	<div class="border-b border-gray-200 dark:border-gray-700" />
 </div>
 
-<div class="gap-16 m-8 md:mx-36 grid-cols-[3fr_2fr] xl:grid">
+<div class="m-8 grid-cols-[3fr_2fr] gap-16 md:mx-36 xl:grid">
 	<div class="mb-12 flex flex-col gap-6">
-		<div class="leading-8 mt-4">
+		<div class="mt-4 leading-8">
 			{event.description}
 		</div>
 	</div>
 	<div>
 		<div
-			class="flex flex-col items-center h-[calc(100vh-500px)] overflow-y-scroll"
+			class="flex h-[calc(100vh-500px)] flex-col items-center overflow-y-scroll"
 			bind:this={messageDiv}
 		>
 			{#each messages as message}
 				<div
-					class="flex items-center bg-white border border-gray-200 my-2 rounded-lg shadow w-full md:flex-row md:max-w-3xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+					class="my-2 flex w-full items-center rounded-lg border border-gray-200 bg-white shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 md:max-w-3xl md:flex-row"
 				>
 					<div class="flex flex-col items-center justify-center p-2">
 						<figure>
 							<img
-								class="object-cover object-center w-20 h-20 m-2 rounded-full aspect-square bg-gray-200"
+								class="m-2 aspect-square h-20 w-20 rounded-full bg-gray-200 object-cover object-center"
 								src={message.user?.avatar}
 								alt=""
 							/>
-							<figcaption class="text-xs text-gray-500 dark:text-gray-400 text-center">
+							<figcaption class="text-center text-xs text-gray-500 dark:text-gray-400">
 								{message.user?.name}
 							</figcaption>
 						</figure>
@@ -73,7 +144,7 @@
 			{/each}
 		</div>
 
-		<div class="flex flex-col items-center mx-auto mt-2 mb-4 rounded-lg shadow max-w-3xl">
+		<div class="mx-auto mb-4 mt-2 flex max-w-3xl flex-col items-center rounded-lg shadow">
 			<form
 				class="w-full"
 				on:submit|preventDefault={() => {
@@ -101,12 +172,12 @@
 			>
 				<textarea
 					rows="4"
-					class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
 					placeholder="Write your thoughts here..."
 					bind:value={comment}
 				/>
 				<button
-					class="inline-flex items-center justify-center w-full px-3 cursor-pointer py-2 mt-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+					class="mt-2 inline-flex w-full cursor-pointer items-center justify-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 					type="submit">Comment</button
 				>
 			</form>

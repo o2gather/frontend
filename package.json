@@ -15,7 +15,7 @@
 		"prepare": "husky install",
 		"gen": "npm run gen-zod-client && npm run gen-mocks",
 		"gen-zod-client": "openapi-zod-client ./meta/api.yml -t ./src/api/template.hbs -o ./src/api/api.client.ts",
-		"gen-mocks": "msw-auto-mock ./meta/api.yml -z ./src/api/api.client.ts -o ./src/mocks/handlers.ts --base-url http://localhost:8000/api/v1"
+		"gen-mocks": "msw-auto-mock ./meta/api.yml -z ./src/api/api.client.ts -o ./src/mocks/handlers.ts --base-url https://o2gather.ptass.org/api/v1"
 	},
 	"devDependencies": {
 		"@anatine/zod-mock": "^3.12.0",

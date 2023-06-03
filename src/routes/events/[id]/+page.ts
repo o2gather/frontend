@@ -5,7 +5,7 @@ export const load = (async ({ params }) => {
 	const { id } = params;
 
 	return {
-		event: await api.getEvent({ params: { event_id: id } }),
-		messages: await api.getEventMsgs({ params: { event_id: id } })
+		event: await api.getEvent({ params: { eventId: id } }),
+		messages: await api.getEventMsgs({ params: { eventId: id } })
 	};
 }) satisfies PageLoad;
