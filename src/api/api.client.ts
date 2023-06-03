@@ -48,6 +48,7 @@ const EventMsg = z.object({
 	user: z.object({ name: z.string(), avatar: z.string() }).optional(),
 	created_at: z.number()
 });
+const Category = z.string();
 const User = z
 	.object({
 		id: z.string().uuid(),
@@ -72,6 +73,7 @@ export type createEvent_Body = z.infer<typeof createEvent_Body>;
 export type updateEvent_Body = z.infer<typeof updateEvent_Body>;
 export type DefaultMsg = z.infer<typeof DefaultMsg>;
 export type EventMsg = z.infer<typeof EventMsg>;
+export type Category = z.infer<typeof Category>;
 export type User = z.infer<typeof User>;
 export type updateUserInfo_Body = z.infer<typeof updateUserInfo_Body>;
 
@@ -82,6 +84,7 @@ export const schemas = {
 	updateEvent_Body,
 	DefaultMsg,
 	EventMsg,
+	Category,
 	User,
 	updateUserInfo_Body
 };
@@ -93,7 +96,7 @@ const endpoints = makeApi([
 		alias: 'getCategories',
 		description: `取得所有類別`,
 		requestFormat: 'json',
-		response: z.array(z.unknown()),
+		response: z.array(Category),
 		errors: [
 			{
 				status: 500,

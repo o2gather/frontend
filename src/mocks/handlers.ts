@@ -24,8 +24,7 @@ const NextMiddleware = rest.middleware((req, res, ctx, next) => {
 	if (!nexts[pathname]) {
 		nexts[pathname] = 0;
 	}
-	// nextValue = nexts[pathname]++;
-	nextValue = 0;
+	nextValue = nexts[pathname]++;
 	return next();
 });
 
@@ -307,8 +306,8 @@ export function getCreateEventMsg500Response() {
 }
 
 export function getGetCategories200Response() {
-	return [...new Array(faker.number.int({ min: 1, max: MAX_ARRAY_LENGTH })).keys()].map(
-		(_) => null
+	return [...new Array(faker.number.int({ min: 1, max: MAX_ARRAY_LENGTH })).keys()].map((_) =>
+		generateMock(schemas.Category)
 	);
 }
 

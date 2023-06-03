@@ -13,10 +13,9 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint --fix",
 		"format": "prettier --plugin-search-dir . --write .",
 		"prepare": "husky install",
-		"swagger2openapi": "swagger2openapi ./src/api/api.v2.yml -y -o ./src/api/api.v3.yaml",
-		"openapi-zod-client": "openapi-zod-client ./src/api/api.v3.yaml -t ./src/api/template.hbs -o ./src/api/api.client.ts",
-		"gen-api-client": "npm run swagger2openapi && npm run openapi-zod-client",
-		"gen-mocks": "msw-auto-mock ./src/api/api.v3.yaml -z ./src/api/api.client.ts -o ./src/mocks/handlers.ts --base-url http://localhost:8000/api/v1"
+		"gen": "npm run gen-zod-client && npm run gen-mocks",
+		"gen-zod-client": "openapi-zod-client ./meta/api.yml -t ./src/api/template.hbs -o ./src/api/api.client.ts",
+		"gen-mocks": "msw-auto-mock ./meta/api.yml -z ./src/api/api.client.ts -o ./src/mocks/handlers.ts --base-url http://localhost:8000/api/v1"
 	},
 	"devDependencies": {
 		"@anatine/zod-mock": "^3.12.0",
@@ -46,7 +45,6 @@
 		"svelte-check": "^3.4.3",
 		"svelte-loading-spinners": "^0.3.4",
 		"sveltekit-superforms": "^0.7.1",
-		"swagger2openapi": "^7.0.8",
 		"tailwindcss": "^3.3.2",
 		"tslib": "^2.5.3",
 		"typescript": "^5.1.3",
