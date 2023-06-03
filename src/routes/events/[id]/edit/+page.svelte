@@ -19,7 +19,19 @@
 	$: $form.start_time = new Date(startTime).getTime();
 	$: $form.end_time = new Date(endTime).getTime();
 
-	$: $form = event;
+	$: {
+		// for (let key in $form) {
+		// 	($form as unknown as Record<keyof typeof $form, typeof $form>)[key as keyof typeof $form] =
+		// 		event[key as keyof typeof $form] as unknown as Record<
+		// 			keyof typeof $form,
+		// 			typeof $form
+		// 		>[keyof Record<keyof typeof $form, typeof $form>];
+		// }
+
+		for (const key in $form) {
+			$form[key as keyof typeof $form] = event[key as keyof typeof $form] as never;
+		}
+	}
 </script>
 
 <div class="mx-12 mb-12 mt-8 flex flex-col gap-6 md:mx-36">
