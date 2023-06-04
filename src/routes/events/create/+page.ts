@@ -5,6 +5,6 @@ import { api } from '../../../api';
 export const load = async () => {
 	return {
 		form: await superValidate(schemas.createEvent_Body),
-		categories: await api.getCategories()
+		categories: await api.getCategories({ withCredentials: true })
 	};
 };

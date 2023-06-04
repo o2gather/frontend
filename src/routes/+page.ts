@@ -15,7 +15,7 @@ export const load = async () => {
 	}
 
 	return {
-		events: await api.getAllEvents(),
-		categories: await api.getCategories()
+		events: await api.getAllEvents({ withCredentials: true }),
+		categories: await api.getCategories({ withCredentials: true })
 	};
 };

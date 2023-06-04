@@ -34,7 +34,9 @@
 				}
 
 				api
-					.createEvent($form)
+					.createEvent($form, {
+						withCredentials: true
+					})
 					.then((result) => {
 						goto(`/events/${result.id}`);
 					})
