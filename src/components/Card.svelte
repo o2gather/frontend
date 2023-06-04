@@ -20,7 +20,7 @@
 			{title}
 		</h5>
 		<p
-			class="mb-10 line-clamp-2 grow cursor-auto font-normal text-gray-600 dark:text-gray-400"
+			class="mb-10 line-clamp-2 grow cursor-auto whitespace-pre-wrap font-normal text-gray-600 dark:text-gray-400"
 			on:click|stopPropagation
 			on:keypress|stopPropagation
 		>

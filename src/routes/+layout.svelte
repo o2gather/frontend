@@ -35,7 +35,7 @@
 	<Navbar />
 </header>
 
-<main>
+<main class="mx-auto max-w-[1440px]">
 	<slot />
 </main>
 
