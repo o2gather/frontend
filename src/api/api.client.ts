@@ -17,7 +17,7 @@ const Event = z.object({
 			z.object({
 				name: z.string(),
 				email: z.string().email(),
-				phone: z.string().regex(/^09[0-9]{8}$/),
+				phone: z.string(),
 				amount: z.number()
 			})
 		)
@@ -55,7 +55,7 @@ const User = z
 		avatar: z.string(),
 		name: z.string(),
 		email: z.string().email(),
-		phone: z.string().regex(/^09[0-9]{8}$/)
+		phone: z.string()
 	})
 	.partial();
 const updateUserInfo_Body = z
