@@ -2,8 +2,9 @@ import { browser } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
 import { api } from '../api';
 import { auth } from '../stores/auth';
+import { invalidateAll } from '$app/navigation';
 
-export const load = async () => {
+export const load = async ({ url }) => {
 	if (browser) {
 		const url = new URL(location.href);
 		const userId = url.searchParams.get('user_id');
@@ -14,8 +15,30 @@ export const load = async () => {
 		}
 	}
 
+	let events = [];
+	const userId = await auth.getUserId();
+	const filterValue = url.searchParams.get('filter');
+	if (userId && filterValue) {
+		events = (
+			await api.getUserEvents({
+				params: {
+					userId
+				},
+				withCredentials: true
+			})
+		).filter((event) => {
+			if (filterValue === 'preparing') {
+				return event.owner?.id === userId;
+			} else if (filterValue === 'joined') {
+				return event.owner?.id !== userId;
+			}
+		});
+	} else {
+		events = await api.getAllEvents({ withCredentials: true });
+	}
+
 	return {
-		events: await api.getAllEvents({ withCredentials: true }),
+		events,
 		categories: await api.getCategories({ withCredentials: true })
 	};
 };

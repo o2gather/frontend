@@ -3,10 +3,10 @@
 
 	export let data;
 
-	const { events, categories } = data;
+	let { categories } = data;
 
 	let selectedCategory: string | null = null;
-	$: filteredEvents = events.filter(
+	$: filteredEvents = data.events.filter(
 		(event) => selectedCategory === null || event.category === selectedCategory
 	);
 </script>

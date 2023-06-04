@@ -3,7 +3,14 @@ import { z } from 'zod';
 
 const Event = z.object({
 	id: z.string().uuid(),
-	user_id: z.string().uuid().optional(),
+	owner: z
+		.object({
+			id: z.string().uuid().optional(),
+			name: z.string(),
+			avatar: z.string(),
+			email: z.string().email().optional()
+		})
+		.optional(),
 	name: z.string(),
 	description: z.string(),
 	category: z.string(),
@@ -21,7 +28,8 @@ const Event = z.object({
 				amount: z.number()
 			})
 		)
-		.optional()
+		.optional(),
+	members_count: z.number().gte(0).optional()
 });
 const DefaultError = z.object({ message: z.string(), error_code: z.string().optional() });
 const createEvent_Body = z.object({

@@ -19,7 +19,7 @@
 	$: startDate = isoToDateTimeString(event.start_time);
 	$: endDate = isoToDateTimeString(event.end_time);
 
-	$: isOwner = event.user_id === $auth.userId;
+	$: isOwner = event.owner?.id === $auth.userId;
 	$: isMember = userEvents.some((e) => e.id === event.id);
 
 	$: console.log(event, userEvents);
@@ -48,13 +48,13 @@
 </script>
 
 <div class="mx-12 mb-12 mt-8 flex flex-col gap-6 md:mx-36">
-	<div class="flex items-center justify-between text-4xl font-bold">
-		<div class="flex items-center">
-			{event.name}
+	<div class="flex flex-wrap items-center justify-between text-4xl font-bold">
+		<div class="flex flex-wrap items-center">
+			<div class="mr-4">{event.name}</div>
 			{#if !isOwner}
 				{#if isMember}
 					<button
-						class="ml-4 inline-flex cursor-pointer items-center rounded-lg bg-red-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+						class="inline-flex cursor-pointer items-center rounded-lg bg-red-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
 						on:click={() => {
 							api.loading
 								.leaveEvent(undefined, {
@@ -77,7 +77,7 @@
 					</button>
 				{:else}
 					<button
-						class="ml-4 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 						on:click={() => {
 							api.loading
 								.joinEvent(
@@ -107,16 +107,16 @@
 			{/if}
 		</div>
 		{#if isOwner}
-			<div>
+			<div class="ml-auto">
 				<a
-					class="ml-4 inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+					class="inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
 					href={`/events/${event.id}/edit`}
 				>
 					Edit
 				</a>
 				<button
 					type="button"
-					class="mb-2 mr-2 rounded-lg bg-red-700 px-3 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+					class="rounded-lg bg-red-700 px-3 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
 					on:click={() => {
 						Swal.fire({
 							title: 'Delete Event',
@@ -170,7 +170,7 @@
 
 <div class="m-8 grid-cols-[3fr_2fr] gap-16 md:mx-36 xl:grid">
 	<div class="mb-12 flex flex-col gap-6">
-		<div class="mt-4 leading-8">
+		<div class="mt-4 whitespace-pre-wrap leading-8">
 			{event.description}
 		</div>
 	</div>
@@ -195,7 +195,7 @@
 							</figcaption>
 						</figure>
 					</div>
-					<div class="m-4 whitespace-pre">
+					<div class="m-4 flex-1 whitespace-pre-wrap">
 						{message.content}
 					</div>
 				</div>
