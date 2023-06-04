@@ -22,7 +22,7 @@
 				isOpen = !isOpen;
 			}}
 		>
-			<img class="h-6 w-6 rounded-full" src={$user?.picture} alt="avatar" />
+			<img class="h-6 w-6 rounded-full" src={$user?.avatar} alt="avatar" />
 			<span class="ml-2">{$user?.name}</span>
 		</button>
 
@@ -31,7 +31,7 @@
 			{isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}"
 		>
 			<div class="flex flex-col items-center">
-				<img class="h-20 w-20 rounded-full" src={$user?.picture} alt="avatar" />
+				<img class="h-20 w-20 rounded-full" src={$user?.avatar} alt="avatar" />
 				<h5 class="my-1 text-xl font-medium text-gray-900 dark:text-white">{$user?.name}</h5>
 				<span class="text-sm text-gray-500 dark:text-gray-400">{$user?.email}</span>
 				<div class=" mt-4 flex w-full flex-col space-y-2">

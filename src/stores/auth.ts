@@ -1,75 +1,49 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
-
-function decode(token: string) {
-	try {
-		const base64Url = token.split('.')[1];
-		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-		const jsonPayload = decodeURIComponent(
-			window
-				.atob(base64)
-				.split('')
-				.map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-				.join('')
-		);
-
-		return JSON.parse(jsonPayload);
-	} catch (e) {
-		throw new Error('ParseError: ' + (e as Error).message);
-	}
-}
-
-interface User {
-	name: string;
-	email: string;
-	picture: string;
-}
+import type { User } from '../api/api.client';
 
 interface Auth {
-	token: string | null;
-	user: User | null;
+	userId?: string | null;
+	user?: User | null;
 }
 
 const { subscribe, set } = writable<Auth>({
-	token: null,
+	userId: null,
 	user: null
 });
 
-const setToken = (token: string | null) => {
-	if (token) {
+const setUserId = (userId: string | null) => {
+	if (userId) {
 		if (browser) {
-			localStorage.setItem('token', token);
+			localStorage.setItem('userId', userId);
 		}
 
-		const { name, email, picture } = decode(token);
-		set({ token, user: { name, email, picture } });
+		set({ userId, user: null });
 	} else {
 		if (browser) {
-			localStorage.removeItem('token');
+			localStorage.removeItem('userId');
 		}
-		set({ token: null, user: null });
+		set({ userId: null, user: null });
 	}
 };
 
-if (browser && localStorage.getItem('token')) {
-	try {
-		setToken(localStorage.getItem('token'));
-	} catch (e) {
-		setToken(null);
-		console.error(e);
+const setUser = (user: User) => {
+	if (user) {
+		set({ userId: user.id, user });
+	} else {
+		set({ userId: null, user: null });
 	}
+};
+
+if (browser && localStorage.getItem('userId')) {
+	setUserId(localStorage.getItem('userId'));
 }
 
 export const auth = {
 	subscribe,
-	setToken,
-	getToken: () => {
-		return new Promise<string | null>((resolve) => subscribe(({ token }) => resolve(token))());
-	},
-	getUser: () => {
-		return new Promise<User | null>((resolve) => subscribe(({ user }) => resolve(user))());
-	},
+	setUserId,
+	setUser,
 	reset: () => {
-		setToken(null);
+		setUserId(null);
 	}
 };

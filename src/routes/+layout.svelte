@@ -1,7 +1,28 @@
 <script>
+	import { api } from './../api';
+	import { browser } from '$app/environment';
 	import Navbar from '../components/Navbar.svelte';
+	import { auth } from '../stores/auth';
 	import { loading } from '../stores/loading';
 	import { Circle3 } from 'svelte-loading-spinners';
+
+	if (browser) {
+		if ($auth.userId) {
+			api
+				.getUserInfo({
+					params: {
+						userId: $auth.userId
+					},
+					withCredentials: true
+				})
+				.then((res) => {
+					auth.setUser(res);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}
 </script>
 
 <svelte:head>

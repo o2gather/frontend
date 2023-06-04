@@ -6,11 +6,11 @@ import { auth } from '../stores/auth';
 export const load = async () => {
 	if (browser) {
 		const url = new URL(location.href);
-		const token = url.searchParams.get('token');
-		if (token) {
-			auth.setToken(token);
-			url.searchParams.delete('token');
-			redirect(302, url.toString());
+		const userId = url.searchParams.get('user_id');
+		if (userId) {
+			auth.setUserId(userId);
+			url.searchParams.delete('user_id');
+			throw redirect(302, url.toString());
 		}
 	}
 
