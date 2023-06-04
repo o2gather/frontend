@@ -150,7 +150,6 @@
 			<form
 				class="w-full"
 				on:submit|preventDefault={() => {
-					comment = '';
 					api
 						.createEventMsg(
 							{
@@ -170,6 +169,9 @@
 						})
 						.catch((error) => {
 							console.log(error);
+						})
+						.finally(() => {
+							comment = '';
 						});
 				}}
 			>
