@@ -19,6 +19,7 @@
 					auth.setUser(res);
 				})
 				.catch((err) => {
+					auth.reset();
 					console.log(err);
 				});
 		}
