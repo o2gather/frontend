@@ -17,18 +17,8 @@
 	$: $form.start_time = new Date(startTime).getTime();
 	$: $form.end_time = new Date(endTime).getTime();
 
-	$: {
-		// for (let key in $form) {
-		// 	($form as unknown as Record<keyof typeof $form, typeof $form>)[key as keyof typeof $form] =
-		// 		event[key as keyof typeof $form] as unknown as Record<
-		// 			keyof typeof $form,
-		// 			typeof $form
-		// 		>[keyof Record<keyof typeof $form, typeof $form>];
-		// }
-
-		for (const key in $form) {
-			$form[key as keyof typeof $form] = event[key as keyof typeof $form] as never;
-		}
+	for (const key in $form) {
+		$form[key as keyof typeof $form] = event[key as keyof typeof $form] as never;
 	}
 </script>
 
@@ -48,7 +38,7 @@
 					return;
 				}
 
-				api
+				api.loading
 					.updateEvent($form, {
 						params: {
 							eventId: event.id

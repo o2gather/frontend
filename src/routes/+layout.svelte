@@ -8,7 +8,7 @@
 
 	if (browser) {
 		if ($auth.userId) {
-			api
+			api.loading
 				.getUserInfo({
 					params: {
 						userId: $auth.userId

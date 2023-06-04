@@ -2,8 +2,6 @@ import { createApiClient } from './api.client';
 import { loading } from '../stores/loading';
 import type { ZodiosPlugin } from '@zodios/core';
 
-export const api = createApiClient(import.meta.env.VITE_API_PREFIX);
-
 const plugin: ZodiosPlugin = {
 	request(api, config) {
 		loading.set(true);
@@ -21,4 +19,10 @@ const plugin: ZodiosPlugin = {
 	}
 };
 
-api.use(plugin);
+const loadingApi = createApiClient(import.meta.env.VITE_API_PREFIX);
+loadingApi.use(plugin);
+
+export const api = {
+	...createApiClient(import.meta.env.VITE_API_PREFIX),
+	loading: loadingApi
+};

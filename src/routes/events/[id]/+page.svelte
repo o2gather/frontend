@@ -3,7 +3,7 @@
 	import { api } from '../../../api';
 	import { auth } from '../../../stores/auth';
 	import { isoToDateTimeString } from './../../../utils';
-	import { onMount, tick } from 'svelte';
+	import { onMount, tick, onDestroy } from 'svelte';
 	import Swal from 'sweetalert2';
 
 	let messageDiv: HTMLDivElement;
@@ -14,47 +14,96 @@
 	});
 
 	export let data;
-	let { event, messages } = data;
+	let { event, messages, userEvents } = data;
 
 	$: startDate = isoToDateTimeString(event.start_time);
 	$: endDate = isoToDateTimeString(event.end_time);
 
 	$: isOwner = event.user_id === $auth.userId;
-	$: isMember = event.members?.some((member) => member.email === $auth.user?.email) ?? false;
+	$: isMember = userEvents.some((e) => e.id === event.id);
+
+	$: console.log(event, userEvents);
+
+	const poll = setInterval(() => {
+		api
+			.getEventMsgs({
+				params: { eventId: event.id },
+				withCredentials: true
+			})
+			.then(async (result) => {
+				if (messages.length !== result.length) {
+					messages = result;
+					await tick();
+					messageDiv.scrollTop = messageDiv.scrollHeight;
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}, 1000);
+
+	onDestroy(() => {
+		clearInterval(poll);
+	});
 </script>
 
 <div class="mx-12 mb-12 mt-8 flex flex-col gap-6 md:mx-36">
 	<div class="flex items-center justify-between text-4xl font-bold">
 		<div class="flex items-center">
 			{event.name}
-			{#if !(isMember || isOwner)}
-				<button
-					class="ml-4 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-					on:click={() => {
-						api
-							.joinEvent(
-								{
-									amount: 1
-								},
-								{
+			{#if !isOwner}
+				{#if isMember}
+					<button
+						class="ml-4 inline-flex cursor-pointer items-center rounded-lg bg-red-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+						on:click={() => {
+							api.loading
+								.leaveEvent(undefined, {
 									params: {
 										eventId: event.id
 									},
 									withCredentials: true
-								}
-							)
-							.then((res) => {
-								console.log(res);
-							})
-							.catch((err) => {
-								console.log(err);
-							});
-					}}
-				>
-					Join
+								})
+								.then(() => {
+									userEvents = userEvents.filter((e) => e.id !== event.id);
+								})
+								.catch((err) => {
+									console.log(err);
+								});
+						}}
+					>
+						Leave
 
-					<img src="/plus.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
-				</button>
+						<img src="/leave.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
+					</button>
+				{:else}
+					<button
+						class="ml-4 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						on:click={() => {
+							api.loading
+								.joinEvent(
+									{
+										amount: 1
+									},
+									{
+										params: {
+											eventId: event.id
+										},
+										withCredentials: true
+									}
+								)
+								.then(() => {
+									userEvents = [...userEvents, event];
+								})
+								.catch((err) => {
+									console.log(err);
+								});
+						}}
+					>
+						Join
+
+						<img src="/plus.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
+					</button>
+				{/if}
 			{/if}
 		</div>
 		{#if isOwner}
@@ -79,7 +128,7 @@
 							showCancelButton: true
 						}).then((result) => {
 							if (result.isConfirmed) {
-								api
+								api.loading
 									.deleteEvent(undefined, {
 										params: {
 											eventId: event.id
@@ -146,7 +195,7 @@
 							</figcaption>
 						</figure>
 					</div>
-					<div class="m-4">
+					<div class="m-4 whitespace-pre">
 						{message.content}
 					</div>
 				</div>
@@ -158,7 +207,7 @@
 				<form
 					class="w-full"
 					on:submit|preventDefault={() => {
-						api
+						api.loading
 							.createEventMsg(
 								{
 									content: comment
@@ -171,7 +220,7 @@
 								}
 							)
 							.then(async (result) => {
-								messages = [...messages, ...result];
+								messages = result;
 								await tick();
 								messageDiv.scrollTop = messageDiv.scrollHeight;
 							})

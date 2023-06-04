@@ -33,7 +33,7 @@
 					return;
 				}
 
-				api
+				api.loading
 					.createEvent($form, {
 						withCredentials: true
 					})

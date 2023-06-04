@@ -43,6 +43,11 @@ export const auth = {
 	subscribe,
 	setUserId,
 	setUser,
+	getUserId: () => {
+		return new Promise<string | null | undefined>((resolve) =>
+			subscribe(({ userId }) => resolve(userId))()
+		);
+	},
 	reset: () => {
 		setUserId(null);
 	}
