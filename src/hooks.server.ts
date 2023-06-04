@@ -1,13 +1,13 @@
-import { server } from './mocks/server.js';
+// import { server } from './mocks/server.js';
 import type { HandleServerError } from '@sveltejs/kit';
 import * as Sentry from '@sentry/node';
 import { AxiosError } from 'axios';
 import { ZodError } from 'zod';
 import { ZodiosError } from '@zodios/core';
 
-if (process.env.NODE_ENV === 'development') {
-	server.listen();
-}
+// if (process.env.NODE_ENV === 'development') {
+// 	server.listen();
+// }
 
 export const handleError = (({ error, event }) => {
 	Sentry.captureException(error, { extra: { event } });

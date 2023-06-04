@@ -54,11 +54,12 @@
 						class="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
 					/>
 					<input
-						class="z-10 inline-flex flex-shrink-0 items-center rounded-l-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none dark:border-gray-700 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+						class="z-10 inline-flex flex-shrink-0 items-center rounded-l-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-left text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none dark:border-gray-700 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800"
 						list="categories"
 						name="category"
 						bind:value={$form.category}
 						{...$constraints.category}
+						placeholder="Select a category"
 					/>
 					<datalist id="categories">
 						{#each data.categories as category}
