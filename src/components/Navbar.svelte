@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { loggedIn } from '../stores/loggedIn';
+	import UserStatus from './UserStatus.svelte';
 
 	let isMenuOpen = false;
 </script>
@@ -43,30 +45,35 @@
 			<ul
 				class="mt-4 flex flex-col items-center rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium dark:border-gray-700 dark:bg-gray-800 md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:p-0 md:dark:bg-gray-900"
 			>
-				<li>
-					<a
-						href="/"
-						class="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
-						aria-current="page">Preparing</a
-					>
-				</li>
-				<li>
-					<a
-						href="/"
-						class="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
-						>Joined</a
-					>
-				</li>
-				<li>
-					<div
-						on:click={() => goto('/events/create')}
-						on:keypress={() => goto('/events/create')}
-						class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-					>
-						Create Event
+				{#if $loggedIn}
+					<li>
+						<a
+							href="/"
+							class="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
+							aria-current="page">Preparing</a
+						>
+					</li>
+					<li>
+						<a
+							href="/"
+							class="block rounded py-2 pl-3 pr-4 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
+							>Joined</a
+						>
+					</li>
+					<li>
+						<div
+							on:click={() => goto('/events/create')}
+							on:keypress={() => goto('/events/create')}
+							class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						>
+							Create Event
 
-						<img src="/plus.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
-					</div>
+							<img src="/plus.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
+						</div>
+					</li>
+				{/if}
+				<li>
+					<UserStatus />
 				</li>
 			</ul>
 		</div>
