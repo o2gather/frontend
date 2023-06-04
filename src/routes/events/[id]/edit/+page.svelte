@@ -54,7 +54,8 @@
 					.updateEvent($form, {
 						params: {
 							eventId: event.id
-						}
+						},
+						withCredentials: true
 					})
 					.then((result) => {
 						goto(`/events/${result.id}`);

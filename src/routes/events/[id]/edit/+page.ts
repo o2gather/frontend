@@ -9,9 +9,10 @@ export const load = async ({ params }) => {
 		event: await api.getEvent({
 			params: {
 				eventId: id
-			}
+			},
+			withCredentials: true
 		}),
 		form: await superValidate(schemas.updateEvent_Body),
-		categories: await api.getCategories()
+		categories: await api.getCategories({ withCredentials: true })
 	};
 };

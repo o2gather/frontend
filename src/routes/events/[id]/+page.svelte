@@ -35,7 +35,8 @@
 							{
 								params: {
 									eventId: event.id
-								}
+								},
+								withCredentials: true
 							}
 						)
 						.then((res) => {
@@ -76,7 +77,8 @@
 								.deleteEvent(undefined, {
 									params: {
 										eventId: event.id
-									}
+									},
+									withCredentials: true
 								})
 								.then(async () => {
 									await tick();
@@ -157,7 +159,8 @@
 							{
 								params: {
 									eventId: event.id
-								}
+								},
+								withCredentials: true
 							}
 						)
 						.then(async (result) => {
