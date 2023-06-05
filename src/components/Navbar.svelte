@@ -8,20 +8,22 @@
 
 <nav class="border-gray-200 bg-white">
 	<div class="justify-betwee mx-6 my-6 flex flex-wrap items-center md:mx-36">
-		<a href="/" class="flex grow items-center" data-sveltekit-preload-data="off">
-			<img
-				src="https://www.svgrepo.com/show/498281/people.svg"
-				class="mr-3 h-8"
-				alt="Flowbite Logo"
-			/>
-			<span class="self-center whitespace-nowrap text-2xl font-semibold">O2Gather</span>
-		</a>
+		<div class="grow">
+			<a href="/" class="inline-flex items-center" data-sveltekit-preload-data="off">
+				<img
+					src="https://www.svgrepo.com/show/498281/people.svg"
+					class="mr-3 h-8"
+					alt="Flowbite Logo"
+				/>
+				<span class="self-center whitespace-nowrap text-2xl font-semibold">O2Gather</span>
+			</a>
+		</div>
 		<button
 			on:click={() => {
 				isMenuOpen = !isMenuOpen;
 			}}
 			type="button"
-			class="ml-3 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+			class="ml-3 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 md:hidden"
 			aria-controls="navbar-default"
 			aria-expanded="false"
 		>
@@ -41,16 +43,20 @@
 		</button>
 		<div class="w-full md:block md:w-auto" id="navbar-default" class:hidden={!isMenuOpen}>
 			<ul
-				class="mt-4 flex flex-col items-start gap-4 rounded-lg border border-gray-100 bg-gray-50 p-6 font-medium"
+				class="mt-4 flex flex-col items-start gap-4 rounded-lg border border-gray-100 bg-gray-50 p-6 font-medium md:mt-0 md:flex-row md:items-center md:gap-0 md:space-x-8 md:border-0 md:bg-white md:p-0"
 			>
 				{#if $loggedIn}
 					<li>
-						<a href="/?filter=organized" class="block rounded text-gray-900 hover:bg-gray-100"
+						<a
+							href="/?filter=organized"
+							class="block rounded text-gray-900 hover:bg-gray-100 md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700"
 							>Organized</a
 						>
 					</li>
 					<li>
-						<a href="/?filter=joined" class="block rounded text-gray-900 hover:bg-gray-100"
+						<a
+							href="/?filter=joined"
+							class="block rounded text-gray-900 hover:bg-gray-100 md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700"
 							>Joined</a
 						>
 					</li>
