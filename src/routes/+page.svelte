@@ -27,8 +27,8 @@
 		class="{showStatus === 'All'
 			? 'border-gray-600  hover:bg-black  focus:ring-gray-300'
 			: showStatus === 'Established'
-			? ' border-green-600   text-green-700 hover:bg-green-700  focus:ring-green-300 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-500  dark:focus:ring-green-800'
-			: 'border-orange-600   text-orange-700 hover:bg-orange-700  focus:ring-orange-300 dark:border-orange-500 dark:text-orange-500 dark:hover:bg-orange-500  dark:focus:ring-orange-800'} mb-3 mr-3 flex flex-nowrap items-center gap-2 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium transition-all duration-500 hover:text-white focus:outline-none focus:ring-4 dark:bg-gray-900 dark:hover:text-white"
+			? ' border-green-600   text-green-700 hover:bg-green-700  focus:ring-green-300'
+			: 'border-orange-600   text-orange-700 hover:bg-orange-700  focus:ring-orange-300'} mb-3 mr-3 flex flex-nowrap items-center gap-2 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium transition-all duration-500 hover:text-white focus:outline-none focus:ring-4"
 		on:click={() => {
 			if (showStatus === 'All') {
 				showStatus = 'Established';
@@ -68,7 +68,7 @@
 		type="button"
 		class="{selectedCategory === null
 			? 'border-blue-600 text-blue-700'
-			: 'border-white text-gray-900'} mb-3 mr-3 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:bg-gray-900 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:focus:ring-blue-800"
+			: 'border-white text-gray-900'} mb-3 mr-3 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300"
 		on:click={() => (selectedCategory = null)}>All categories</button
 	>
 	{#each categories as category}
@@ -76,7 +76,7 @@
 			type="button"
 			class="{selectedCategory === category
 				? 'border-blue-600 text-blue-700'
-				: 'border-white text-gray-900'} mb-3 mr-3 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:border-blue-500 dark:bg-gray-900 dark:text-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:focus:ring-blue-800"
+				: 'border-white text-gray-900'} mb-3 mr-3 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300"
 			on:click={() => (selectedCategory = category)}
 		>
 			{category}

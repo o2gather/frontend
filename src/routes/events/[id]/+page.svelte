@@ -57,7 +57,7 @@
 			{#if !isOwner}
 				{#if isMember}
 					<button
-						class="inline-flex cursor-pointer items-center rounded-lg bg-red-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+						class="inline-flex cursor-pointer items-center rounded-lg bg-red-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300"
 						on:click={() => {
 							api.loading
 								.leaveEvent(undefined, {
@@ -80,7 +80,7 @@
 					</button>
 				{:else}
 					<button
-						class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
 						on:click={() => {
 							api.loading
 								.joinEvent(
@@ -112,14 +112,14 @@
 		{#if isOwner}
 			<div class="ml-auto">
 				<a
-					class="inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+					class="inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300"
 					href={`/events/${event.id}/edit`}
 				>
 					Edit
 				</a>
 				<button
 					type="button"
-					class="rounded-lg bg-red-700 px-3 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+					class="rounded-lg bg-red-700 px-3 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300"
 					on:click={() => {
 						Swal.fire({
 							title: 'Delete Event',
@@ -171,14 +171,14 @@
 							Participants: <span class="font-bold">{event.members_count + 1}</span> Person
 							<a
 								href={`mailto:${event.members.map((member) => member.email).join(',')}`}
-								class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+								class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
 								>Mail to everyone</a
 							>
 						{:else}
 							Participants: <span class="font-bold">{event.members_count + 1}</span> Person
 							{#if event.members_count + 1 >= event.min_amount}
 								<button
-									class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+									class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
 									on:click={() => {
 										Swal.fire({
 											title: 'Are you sure about to establish this event?',
@@ -224,10 +224,8 @@
 						{/if}
 					</summary>
 
-					<table class="my-4 w-full text-left text-sm text-gray-500 dark:text-gray-400">
-						<thead
-							class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
-						>
+					<table class="my-4 w-full text-left text-sm text-gray-500">
+						<thead class="bg-gray-50 text-xs uppercase text-gray-700">
 							<tr>
 								<th scope="col" class="px-6 py-3"> # </th>
 								<th scope="col" class="px-6 py-3"> Name </th>
@@ -236,15 +234,11 @@
 						</thead>
 						<tbody>
 							{#each [event.owner, ...event.members] as member, i}
-								<tr class="bg-white dark:bg-gray-800">
-									<td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-										>{i + 1}</td
-									>
+								<tr class="bg-white">
+									<td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900">{i + 1}</td>
 									<td class="px-6 py-4">{member?.name}</td>
 									<td class="px-6 py-4">
-										<a href={`mailto:${member?.email}`} class="text-blue-700 dark:text-blue-400"
-											>{member?.email}</a
-										>
+										<a href={`mailto:${member?.email}`} class="text-blue-700">{member?.email}</a>
 									</td>
 								</tr>
 							{/each}
@@ -273,7 +267,7 @@
 		</span>
 	</div>
 
-	<div class="border-b border-gray-200 dark:border-gray-700" />
+	<div class="border-b border-gray-200" />
 </div>
 
 <div class="mx-8 rounded-md border p-4 md:mx-36">
@@ -310,7 +304,7 @@
 		>
 			{#each messages as message}
 				<div
-					class="my-2 flex w-full items-center rounded-lg border border-gray-200 bg-white shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 md:max-w-3xl md:flex-row"
+					class="my-2 flex w-full items-center rounded-lg border border-gray-200 bg-white shadow hover:bg-gray-100"
 				>
 					<div class="flex flex-col items-center justify-center p-2">
 						<figure>
@@ -319,7 +313,7 @@
 								src={message.user?.avatar}
 								alt=""
 							/>
-							<figcaption class="text-center text-xs text-gray-500 dark:text-gray-400">
+							<figcaption class="text-center text-xs text-gray-500">
 								{message.user?.name}
 							</figcaption>
 						</figure>
@@ -363,12 +357,12 @@
 				>
 					<textarea
 						rows="4"
-						class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+						class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
 						placeholder="Write your thoughts here..."
 						bind:value={comment}
 					/>
 					<button
-						class="mt-2 inline-flex w-full cursor-pointer items-center justify-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						class="mt-2 inline-flex w-full cursor-pointer items-center justify-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
 						type="submit">Comment</button
 					>
 				</form>
@@ -377,12 +371,12 @@
 			<div class="mx-auto mb-4 mt-2 flex max-w-3xl flex-col items-center rounded-lg">
 				<textarea
 					rows="4"
-					class="block w-full rounded-lg border border-gray-300 bg-gray-100 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+					class="block w-full rounded-lg border border-gray-300 bg-gray-100 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
 					placeholder="You must be a member to comment"
 					disabled
 				/>
 				<button
-					class="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-green-700 bg-opacity-50 px-3 py-2 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+					class="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-green-700 bg-opacity-50 px-3 py-2 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-blue-300"
 					type="submit"
 					disabled>Comment</button
 				>
