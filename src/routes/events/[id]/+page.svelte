@@ -52,7 +52,7 @@
 		<div class="flex flex-wrap items-center">
 			<div class="mr-4 flex flex-wrap items-center">
 				<div class="mr-4">{event.name}</div>
-				<div class="text-lg">({event.min_amount}人 - {event.max_amount}人)</div>
+				<div class="text-lg">({event.min_amount} - {event.max_amount} Person)</div>
 			</div>
 			{#if !isOwner}
 				{#if isMember}
