@@ -9,6 +9,9 @@ ENV VITE_GOOGLE_LOGIN_URI=$GOOGLE_LOGIN_URI
 
 WORKDIR /usr/src/app
 
+RUN apk update && \
+    apk add --no-cache git 
+
 RUN npm install -g pnpm
 
 COPY package.json pnpm-lock.yaml ./
@@ -21,6 +24,9 @@ RUN pnpm build
 FROM node:18.15.0-alpine3.17
 
 WORKDIR /usr/src/app
+
+RUN apk update && \
+    apk add --no-cache git 
 
 RUN npm install -g pnpm
 
