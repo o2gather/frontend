@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { User } from '../api/api.client';
+import { api } from '../api';
 
 interface Auth {
 	userId?: string | null;
@@ -48,7 +49,8 @@ export const auth = {
 			subscribe(({ userId }) => resolve(userId))()
 		);
 	},
-	reset: () => {
+	logout: async () => {
+		await api.Logout(undefined, { withCredentials: true });
 		setUserId(null);
 	}
 };
