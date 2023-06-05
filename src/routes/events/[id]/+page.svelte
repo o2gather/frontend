@@ -55,7 +55,7 @@
 				<div class="mr-4">{event.name}</div>
 				<div class="text-lg">({event.min_amount} - {event.max_amount} Person)</div>
 			</div>
-			{#if !isOwner}
+			{#if !isOwner && !event.established}
 				{#if isMember}
 					<button
 						class="inline-flex cursor-pointer items-center rounded-lg bg-red-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300"
