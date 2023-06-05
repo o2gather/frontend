@@ -162,78 +162,96 @@
 	</div>
 
 	<div class="flex flex-wrap items-center text-gray-700">
-		{#if isOwner}
-			<details class="w-full">
-				<summary>
-					<!-- 判斷如果成團 -->
-					{#if false}
-						實際參與人數：{event.members_count + 1}人
-						<a
-							href={`mailto:${event.members.map((member) => member.email).join(',')}`}
-							class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-							>寄信給所有人</a
-						>
-					{:else if event.members_count + 1 >= event.min_amount}
-						當前參與人數：{event.members_count + 1}人
-						<button
-							class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-							on:click={() => {
-								Swal.fire({
-									title: '確定成團嗎?',
-									text: '成團後成員將無法加入或退出',
-									icon: 'question',
-									confirmButtonText: 'Yes',
-									cancelButtonText: 'No',
-									showCancelButton: true
-								}).then((result) => {
-									if (result.isConfirmed) {
-										// api.loading
-										// 	.finishEvent(undefined, {
-										// 		params: {
-										// 			eventId: event.id
-										// 		},
-										// 		withCredentials: true
-										// 	})
-										// 	.then(() => {
+		{#if event.members_count !== undefined}
+			{#if isOwner && event.members !== undefined}
+				<details class="w-full">
+					<summary>
+						<!-- 判斷如果成團 -->
+						{#if event.established}
+							Participants: <span class="font-bold">{event.members_count + 1}</span> Person
+							<a
+								href={`mailto:${event.members.map((member) => member.email).join(',')}`}
+								class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+								>Mail to everyone</a
+							>
+						{:else}
+							Participants: <span class="font-bold">{event.members_count + 1}</span> Person
+							{#if event.members_count + 1 >= event.min_amount}
+								<button
+									class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+									on:click={() => {
 										Swal.fire({
-											title: '成團成功!',
-											icon: 'success',
-											confirmButtonText: 'OK'
-										});
-										// })
-										// .catch((err) => {
-										// 	console.log(err);
-										// });
-									}
-								});
-							}}
-						>
-							成團
-						</button>
-					{/if}
-				</summary>
+											title: 'Are you sure about to establish this event?',
+											text: 'After the establishment of the event, members will not be able to join or leave.',
+											icon: 'question',
+											confirmButtonText: 'Yes',
+											cancelButtonText: 'No',
+											showCancelButton: true
+										}).then((result) => {
+											if (result.isConfirmed) {
+												api.loading
+													.updateEvent(
+														{
+															...event,
+															established: true
+														},
+														{
+															params: {
+																eventId: event.id
+															},
+															withCredentials: true
+														}
+													)
+													.then((result) => {
+														Swal.fire({
+															title: 'Establish success!',
+															icon: 'success',
+															confirmButtonText: 'OK'
+														});
 
-				<table class="w-full border-collapse">
-					<thead>
-						<tr>
-							<th class="border border-black">#</th>
-							<th class="border border-black">姓名</th>
-							<th class="border border-black">信箱</th>
-						</tr>
-					</thead>
-					<tbody class="text-center">
-						{#each [event.owner, ...event.members] as member, i}
+														event = result;
+													})
+													.catch((err) => {
+														console.log(err);
+													});
+											}
+										});
+									}}
+								>
+									Establish
+								</button>
+							{/if}
+						{/if}
+					</summary>
+
+					<table class="my-4 w-full text-left text-sm text-gray-500 dark:text-gray-400">
+						<thead
+							class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400"
+						>
 							<tr>
-								<td class="border border-black">{i + 1}</td>
-								<td class="border border-black">{member.name}</td>
-								<td class="border border-black">{member.email}</td>
+								<th scope="col" class="px-6 py-3"> # </th>
+								<th scope="col" class="px-6 py-3"> Name </th>
+								<th scope="col" class="px-6 py-3"> Email </th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</details>
-		{:else}
-			<div>當前參與人數：{event.members_count + 1}人</div>
+						</thead>
+						<tbody>
+							{#each [event.owner, ...event.members] as member, i}
+								<tr class="bg-white dark:bg-gray-800">
+									<td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+										>{i + 1}</td
+									>
+									<td class="px-6 py-4">{member?.name}</td>
+									<td class="px-6 py-4">
+										<a href={`mailto:${member?.email}`} class="text-blue-700 dark:text-blue-400"
+											>{member?.email}</a
+										>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</details>
+			{/if}
 		{/if}
 	</div>
 
@@ -248,19 +266,19 @@
 </div>
 
 <div class="mx-8 rounded-md border p-4 md:mx-36">
-	<h1 class="text-xl font-bold">發起人</h1>
-	<div class="flex items-center">
+	<h1 class="text-xl font-bold">Organizer</h1>
+	<div class="mt-4 flex items-center">
 		<img
 			class="h-10 w-10 rounded-full bg-gray-200 object-cover object-center"
-			src={event.owner.avatar}
+			src={event.owner?.avatar}
 			alt=""
 		/>
 		<div class="ml-4">
 			<div class="text-sm font-medium text-gray-900">
-				{event.owner.name}
+				{event.owner?.name}
 			</div>
 			<div class="text-sm text-gray-500">
-				{event.owner.email}
+				{event.owner?.email}
 			</div>
 		</div>
 	</div>
@@ -268,12 +286,13 @@
 
 <div class="m-8 grid-cols-[3fr_2fr] gap-16 md:mx-36 xl:grid">
 	<div class="mb-4 flex flex-col gap-6">
-		<h1 class="text-2xl font-bold">活動內容</h1>
+		<h1 class="text-2xl font-bold">Event Description</h1>
 		<div class="whitespace-pre-wrap leading-8">
 			{event.description}
 		</div>
 	</div>
-	<div>
+	<div class="rounded-lg px-6 py-8 shadow">
+		<h1 class="mb-6 mt-2 text-2xl font-bold">Messages</h1>
 		<div
 			class="flex h-[calc(100vh-500px)] flex-col items-center overflow-y-scroll"
 			bind:this={messageDiv}
@@ -302,7 +321,7 @@
 		</div>
 
 		{#if isMember || isOwner}
-			<div class="mx-auto mb-4 mt-2 flex max-w-3xl flex-col items-center rounded-lg shadow">
+			<div class="mx-auto mb-4 mt-2 flex max-w-3xl flex-col items-center rounded-lg">
 				<form
 					class="w-full"
 					on:submit|preventDefault={() => {
@@ -344,7 +363,7 @@
 				</form>
 			</div>
 		{:else}
-			<div class="mx-auto mb-4 mt-2 flex max-w-3xl flex-col items-center rounded-lg shadow">
+			<div class="mx-auto mb-4 mt-2 flex max-w-3xl flex-col items-center rounded-lg">
 				<textarea
 					rows="4"
 					class="block w-full rounded-lg border border-gray-300 bg-gray-100 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"

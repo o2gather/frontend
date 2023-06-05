@@ -29,7 +29,8 @@ const Event = z.object({
 			})
 		)
 		.optional(),
-	members_count: z.number().gte(0).optional()
+	members_count: z.number().gte(0).optional(),
+	established: z.boolean()
 });
 const DefaultError = z.object({ message: z.string(), error_code: z.string().optional() });
 const createEvent_Body = z.object({
@@ -48,7 +49,8 @@ const updateEvent_Body = z.object({
 	start_time: z.number(),
 	end_time: z.number(),
 	min_amount: z.number().gte(2).optional(),
-	max_amount: z.number().gte(2).optional()
+	max_amount: z.number().gte(2).optional(),
+	established: z.boolean().optional()
 });
 const DefaultMsg = z.object({ message: z.string(), message_code: z.string().optional() });
 const EventMsg = z.object({
