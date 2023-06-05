@@ -255,11 +255,22 @@
 		{/if}
 	</div>
 
-	<div class="text-gray-400">
-		{new Date(startDate).toLocaleString()}
-		{#if event.end_time}
-			- {new Date(endDate).toLocaleString()}
-		{/if}
+	<div class="flex flex-wrap items-center justify-between gap-y-2">
+		<div class="text-gray-400">
+			{new Date(startDate).toLocaleString()}
+			{#if event.end_time}
+				- {new Date(endDate).toLocaleString()}
+			{/if}
+		</div>
+		<span class="text-sm font-bold uppercase">
+			{#if event.established}
+				<div class="text-green-600">Established</div>
+			{:else if event.members_count === event.max_amount}
+				<div class="text-red-600">Full</div>
+			{:else}
+				<div class="text-yellow-600">Preparing</div>
+			{/if}
+		</span>
 	</div>
 
 	<div class="border-b border-gray-200 dark:border-gray-700" />

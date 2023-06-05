@@ -33,6 +33,6 @@
 </div>
 <div class="mx-6 mb-12 grid grid-cols-1 gap-6 md:mx-12 md:grid-cols-3">
 	{#each filteredEvents as event (event.id)}
-		<Card title={event.name} description={event.description} link={`/events/${event.id}`} />
+		<Card {event} />
 	{/each}
 </div>
