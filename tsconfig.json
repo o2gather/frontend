@@ -10,6 +10,6 @@
 		"sourceMap": true,
 		"strict": true,
 		"outDir": "build",
-		"types": ["vitest/globals"]
+		"types": ["vitest/globals", "google.accounts"]
 	}
 }

@@ -5,6 +5,7 @@
 	import { isoToDateTimeString } from './../../../utils';
 	import { onMount, tick, onDestroy } from 'svelte';
 	import Swal from 'sweetalert2';
+	import { loggedIn } from '../../../stores/loggedIn';
 
 	let messageDiv: HTMLDivElement;
 	let comment: string;
@@ -82,24 +83,41 @@
 					<button
 						class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
 						on:click={() => {
-							api.loading
-								.joinEvent(
-									{
-										amount: 1
-									},
-									{
-										params: {
-											eventId: event.id
+							if ($loggedIn) {
+								api.loading
+									.joinEvent(
+										{
+											amount: 1
 										},
-										withCredentials: true
-									}
-								)
-								.then(() => {
-									userEvents = [...userEvents, event];
-								})
-								.catch((err) => {
-									console.log(err);
+										{
+											params: {
+												eventId: event.id
+											},
+											withCredentials: true
+										}
+									)
+									.then(() => {
+										userEvents = [...userEvents, event];
+									})
+									.catch((err) => {
+										console.log(err);
+									});
+							} else {
+								Swal.fire({
+									title: 'Login Required',
+									text: 'You need to login to join an event',
+									icon: 'warning',
+									showConfirmButton: false,
+									timer: 3000
 								});
+
+								window.google.accounts.id.prompt((notification) => {
+									if (notification.isNotDisplayed()) {
+										document.cookie = `g_state=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT`;
+										window.google.accounts.id.prompt();
+									}
+								});
+							}
 						}}
 					>
 						Join
