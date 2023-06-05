@@ -20,6 +20,7 @@
 	for (const key in $form) {
 		$form[key as keyof typeof $form] = event[key as keyof typeof $form] as never;
 	}
+	delete $form.established;
 </script>
 
 <div class="mx-12 mb-12 mt-8 flex flex-col gap-6 md:mx-36">
