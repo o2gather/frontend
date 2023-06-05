@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  generate-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            API_PREFIX=${{ secrets.API_PREFIX }}
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_LOGIN_URI=${{ secrets.GOOGLE_LOGIN_URI }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: generate-release
+
+    steps:        
+      - name: prepare project manifest
+        run: |
+          apt update && apt install -y git wget
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+          git config --global user.name github
+          git config --global user.email "github@github.com"
+          git clone --single-branch --branch main https://${{ github.actor }}:${{ secrets.TOKEN }}@github.com/o2gather/manifest.git
+      
+      - name: update tag changes
+        run: |
+          cd manifest
+          yq eval -i ".app.frontend.image.tag = \"${{ github.ref_name }}\"" values.yaml
+          git commit -am "image tag update"
+          git push origin main
