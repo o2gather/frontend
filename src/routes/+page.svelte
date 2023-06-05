@@ -28,7 +28,7 @@
 			? 'border-gray-600  hover:bg-black  focus:ring-gray-300'
 			: showStatus === 'Established'
 			? ' border-green-600   text-green-700 hover:bg-green-700  focus:ring-green-300 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-500  dark:focus:ring-green-800'
-			: 'border-orange-600   text-orange-700 hover:bg-orange-700  focus:ring-orange-300 dark:border-orange-500 dark:text-orange-500 dark:hover:bg-orange-500  dark:focus:ring-orange-800'} mb-3 mr-3 flex flex-nowrap items-center gap-2 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:text-white focus:outline-none focus:ring-4 dark:bg-gray-900 dark:hover:text-white"
+			: 'border-orange-600   text-orange-700 hover:bg-orange-700  focus:ring-orange-300 dark:border-orange-500 dark:text-orange-500 dark:hover:bg-orange-500  dark:focus:ring-orange-800'} mb-3 mr-3 flex flex-nowrap items-center gap-2 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium transition-all duration-500 hover:text-white focus:outline-none focus:ring-4 dark:bg-gray-900 dark:hover:text-white"
 		on:click={() => {
 			if (showStatus === 'All') {
 				showStatus = 'Established';
@@ -42,13 +42,25 @@
 		on:mouseleave={() => (showStatusButtonHovered = false)}
 	>
 		{#if showStatus === 'All'}
-			<ChangeIcon class="h-5 w-5 {showStatusButtonHovered ? 'fill-white' : 'fill-black'}" />
+			<ChangeIcon
+				class="h-5 w-5 {showStatusButtonHovered
+					? 'rotate-180 fill-white'
+					: 'fill-black'} transition-all duration-500"
+			/>
 			All
 		{:else if showStatus === 'Established'}
-			<ChangeIcon class="h-5 w-5 {showStatusButtonHovered ? 'fill-white' : 'fill-orange-700'}" />
+			<ChangeIcon
+				class="h-5 w-5 {showStatusButtonHovered
+					? 'rotate-180 fill-white'
+					: 'fill-green-700'} transition-all duration-500"
+			/>
 			Established
 		{:else}
-			<ChangeIcon class="h-5 w-5 {showStatusButtonHovered ? 'fill-white' : 'fill-orange-700'}" />
+			<ChangeIcon
+				class="h-5 w-5 {showStatusButtonHovered
+					? 'rotate-180 fill-white'
+					: 'fill-orange-700'} transition-all duration-500"
+			/>
 			Preparing
 		{/if}
 	</button>
