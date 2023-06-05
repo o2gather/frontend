@@ -2,9 +2,6 @@ import { api } from '../../../api';
 import { auth } from '../../../stores/auth';
 import type { PageLoad } from './$types';
 
-export const ssr = false;
-export const csr = true;
-
 export const load = (async ({ params }) => {
 	const { id } = params;
 
