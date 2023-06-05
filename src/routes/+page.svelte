@@ -1,17 +1,57 @@
 <script lang="ts">
 	import Card from '../components/Card.svelte';
+	import ChangeIcon from '../components/ChangeIcon.svelte';
 
 	export let data;
 
 	let { categories } = data;
 
+	let showStatus: 'All' | 'Established' | 'Preparing' = 'All';
+	let showStatusButtonHovered = false;
+
 	let selectedCategory: string | null = null;
-	$: filteredEvents = data.events.filter(
-		(event) => selectedCategory === null || event.category === selectedCategory
-	);
+	$: filteredEvents = data.events.filter((event) => {
+		const isSelectedCategory = selectedCategory === null || event.category === selectedCategory;
+		const isSelectedStatus =
+			showStatus === 'All' ||
+			(showStatus === 'Established' && event.established) ||
+			(showStatus === 'Preparing' && !event.established);
+
+		return isSelectedCategory && isSelectedStatus;
+	});
 </script>
 
 <div class="mx-2 flex flex-wrap items-center justify-center py-4 md:py-8">
+	<button
+		type="button"
+		class="{showStatus === 'All'
+			? 'border-gray-600  hover:bg-black  focus:ring-gray-300'
+			: showStatus === 'Established'
+			? ' border-green-600   text-green-700 hover:bg-green-700  focus:ring-green-300 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-500  dark:focus:ring-green-800'
+			: 'border-orange-600   text-orange-700 hover:bg-orange-700  focus:ring-orange-300 dark:border-orange-500 dark:text-orange-500 dark:hover:bg-orange-500  dark:focus:ring-orange-800'} mb-3 mr-3 flex flex-nowrap items-center gap-2 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:text-white focus:outline-none focus:ring-4 dark:bg-gray-900 dark:hover:text-white"
+		on:click={() => {
+			if (showStatus === 'All') {
+				showStatus = 'Established';
+			} else if (showStatus === 'Established') {
+				showStatus = 'Preparing';
+			} else {
+				showStatus = 'All';
+			}
+		}}
+		on:mouseenter={() => (showStatusButtonHovered = true)}
+		on:mouseleave={() => (showStatusButtonHovered = false)}
+	>
+		{#if showStatus === 'All'}
+			<ChangeIcon class="h-5 w-5 {showStatusButtonHovered ? 'fill-white' : 'fill-black'}" />
+			All
+		{:else if showStatus === 'Established'}
+			<ChangeIcon class="h-5 w-5 {showStatusButtonHovered ? 'fill-white' : 'fill-orange-700'}" />
+			Established
+		{:else}
+			<ChangeIcon class="h-5 w-5 {showStatusButtonHovered ? 'fill-white' : 'fill-orange-700'}" />
+			Preparing
+		{/if}
+	</button>
 	<button
 		type="button"
 		class="{selectedCategory === null

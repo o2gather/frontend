@@ -2,7 +2,6 @@ import { browser } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
 import { api } from '../api';
 import { auth } from '../stores/auth';
-import { invalidateAll } from '$app/navigation';
 
 export const load = async ({ url }) => {
 	if (browser) {
@@ -27,7 +26,7 @@ export const load = async ({ url }) => {
 				withCredentials: true
 			})
 		).filter((event) => {
-			if (filterValue === 'preparing') {
+			if (filterValue === 'organized') {
 				return event.owner?.id === userId;
 			} else if (filterValue === 'joined') {
 				return event.owner?.id !== userId;
