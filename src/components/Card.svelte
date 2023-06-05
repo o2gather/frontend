@@ -12,11 +12,11 @@
 	class="h-full cursor-pointer rounded-lg border border-gray-200 bg-white shadow"
 >
 	<div class="flex h-full flex-col p-8">
-		<div class="flex flex-wrap justify-between gap-y-2">
+		<div class="flex justify-between gap-y-2">
 			<h5 class="mb-8 text-2xl font-bold tracking-tight text-gray-900">
 				{event.name}
 			</h5>
-			<span class="mt-1 text-sm text-gray-400">
+			<span class="ml-2 mt-1 whitespace-nowrap text-sm text-gray-400">
 				{(event.members_count ?? 0) + 1} / {event.max_amount} Person
 			</span>
 		</div>
