@@ -165,9 +165,16 @@
 		{#if isOwner}
 			<details class="w-full">
 				<summary>
-					當前參與人數：{event.members_count + 1}人
-
-					{#if event.members_count + 1 >= event.min_amount}
+					<!-- 判斷如果成團 -->
+					{#if false}
+						實際參與人數：{event.members_count + 1}人
+						<a
+							href={`mailto:${event.members.map((member) => member.email).join(',')}`}
+							class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+							>寄信給所有人</a
+						>
+					{:else if event.members_count + 1 >= event.min_amount}
+						當前參與人數：{event.members_count + 1}人
 						<button
 							class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 							on:click={() => {
