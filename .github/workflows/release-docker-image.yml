@@ -1,0 +1,41 @@
+name: Release Docker Image
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract Tag Version
+        id: tag_version
+        run: |
+          echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/v}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/o2gather-frontend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/o2gather-frontend:${{ steps.tag_version.outputs.VERSION }}
+          build-args: |
+            API_PREFIX=${{ secrets.API_PREFIX }}
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_LOGIN_URI=${{ secrets.GOOGLE_LOGIN_URI }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/o2gather-frontend:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/o2gather-frontend:buildcache,mode=max
