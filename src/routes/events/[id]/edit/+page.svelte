@@ -11,16 +11,16 @@
 	const { form, errors, constraints } = superForm(data.form);
 	const { event } = data;
 
-	let startTime = isoToDateTimeString(new Date().getTime());
-	let endTime = isoToDateTimeString(new Date().getTime());
-
-	$: $form.start_time = new Date(startTime).getTime();
-	$: $form.end_time = new Date(endTime).getTime();
-
 	for (const key in $form) {
 		$form[key as keyof typeof $form] = event[key as keyof typeof $form] as never;
 	}
 	delete $form.established;
+
+	let startTime = isoToDateTimeString($form.start_time);
+	let endTime = isoToDateTimeString($form.end_time);
+
+	$: $form.start_time = new Date(startTime).getTime();
+	$: $form.end_time = new Date(endTime).getTime();
 </script>
 
 <div class="mx-12 mb-12 mt-8 flex flex-col gap-6 md:mx-36">
