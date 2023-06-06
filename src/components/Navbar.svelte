@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { testid } from '../actions/testid';
 	import { loggedIn } from '../stores/loggedIn';
 	import UserStatus from './UserStatus.svelte';
 
@@ -50,14 +51,14 @@
 						<a
 							href="/?filter=organized"
 							class="block rounded text-gray-900 hover:bg-gray-100 md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700"
-							>Organized</a
+							use:testid={'navbar-organized'}>Organized</a
 						>
 					</li>
 					<li>
 						<a
 							href="/?filter=joined"
 							class="block rounded text-gray-900 hover:bg-gray-100 md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700"
-							>Joined</a
+							use:testid={'navbar-joined'}>Joined</a
 						>
 					</li>
 					<li>

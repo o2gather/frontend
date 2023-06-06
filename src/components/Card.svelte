@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { testid } from '../actions/testid';
 	import type { Event } from '../api/api.client';
 
 	export let event: Event;
@@ -10,6 +11,7 @@
 	on:click={() => goto(link)}
 	on:keypress={() => goto(link)}
 	class="h-full cursor-pointer rounded-lg border border-gray-200 bg-white shadow"
+	use:testid={'card'}
 >
 	<div class="flex h-full flex-col p-8">
 		<div class="flex justify-between gap-y-2">

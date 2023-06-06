@@ -6,6 +6,7 @@
 	import { onMount, tick, onDestroy } from 'svelte';
 	import Swal from 'sweetalert2';
 	import { loggedIn } from '../../../stores/loggedIn';
+	import { testid } from '../../../actions/testid';
 
 	let messageDiv: HTMLDivElement;
 	let comment: string;
@@ -59,6 +60,7 @@
 				{#if isMember}
 					<button
 						class="inline-flex cursor-pointer items-center rounded-lg bg-red-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300"
+						use:testid={'leave-button'}
 						on:click={() => {
 							api.loading
 								.leaveEvent(undefined, {
@@ -82,6 +84,7 @@
 				{:else}
 					<button
 						class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+						use:testid={'join-button'}
 						on:click={() => {
 							if ($loggedIn) {
 								api.loading
@@ -132,12 +135,14 @@
 				<a
 					class="inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300"
 					href={`/events/${event.id}/edit`}
+					use:testid={'edit-button'}
 				>
 					Edit
 				</a>
 				<button
 					type="button"
 					class="rounded-lg bg-red-700 px-3 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300"
+					use:testid={'delete-button'}
 					on:click={() => {
 						Swal.fire({
 							title: 'Delete Event',
@@ -197,6 +202,7 @@
 							{#if event.members_count + 1 >= event.min_amount}
 								<button
 									class="m-2 inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
+									use:testid={'establish-button'}
 									on:click={() => {
 										Swal.fire({
 											title: 'Are you sure about to establish this event?',
@@ -252,7 +258,7 @@
 						</thead>
 						<tbody>
 							{#each [event.owner, ...event.members] as member, i}
-								<tr class="bg-white">
+								<tr class="bg-white" use:testid={`member`}>
 									<td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900">{i + 1}</td>
 									<td class="px-6 py-4">{member?.name}</td>
 									<td class="px-6 py-4">
@@ -274,7 +280,7 @@
 				- {new Date(endDate).toLocaleString()}
 			{/if}
 		</div>
-		<span class="text-sm font-bold uppercase">
+		<span class="text-sm font-bold uppercase" use:testid={'status'}>
 			{#if event.established}
 				<div class="text-green-600">Established</div>
 			{:else if event.members_count === event.max_amount}
@@ -288,7 +294,7 @@
 	<div class="border-b border-gray-200" />
 </div>
 
-<div class="mx-8 rounded-md border p-4 md:mx-36">
+<div class="mx-8 rounded-md border p-4 md:mx-36" use:testid={'organizer'}>
 	<h1 class="text-xl font-bold">Organizer</h1>
 	<div class="mt-4 flex items-center">
 		<img
@@ -323,6 +329,7 @@
 			{#each messages as message}
 				<div
 					class="my-2 flex w-full items-center rounded-lg border border-gray-200 bg-white shadow hover:bg-gray-100"
+					use:testid={'message'}
 				>
 					<div class="flex flex-col items-center justify-center p-2">
 						<figure>

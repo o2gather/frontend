@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { testid } from '../actions/testid';
 	import Card from '../components/Card.svelte';
 	import ChangeIcon from '../components/ChangeIcon.svelte';
 
@@ -24,6 +25,7 @@
 <div class="mx-2 flex flex-wrap items-center justify-center py-4 md:py-8">
 	<button
 		type="button"
+		use:testid={'filter-button'}
 		class="{showStatus === 'All'
 			? 'border-gray-600  hover:bg-black  focus:ring-gray-300'
 			: showStatus === 'Established'
@@ -78,6 +80,7 @@
 				? 'border-blue-600 text-blue-700'
 				: 'border-white text-gray-900'} mb-3 mr-3 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300"
 			on:click={() => (selectedCategory = category)}
+			use:testid={'category'}
 		>
 			{category}
 		</button>
