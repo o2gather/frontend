@@ -277,7 +277,7 @@
 		<span class="text-sm font-bold uppercase">
 			{#if event.established}
 				<div class="text-green-600">Established</div>
-			{:else if event.members_count === event.max_amount}
+			{:else if (event.members_count ?? 0) + 1 === event.max_amount}
 				<div class="text-red-600">Full</div>
 			{:else}
 				<div class="text-yellow-600">Preparing</div>
