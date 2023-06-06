@@ -24,7 +24,7 @@
 	$: isOwner = event.owner?.id === $auth.userId;
 	$: isMember = userEvents.some((e) => e.id === event.id);
 
-	$: console.log(event, userEvents);
+	// $: console.log(event, userEvents);
 
 	const poll = setInterval(() => {
 		api
@@ -337,7 +337,7 @@
 <div class="overflow-wrap-anywhere m-8 grid-cols-[3fr_2fr] gap-16 md:mx-36 xl:grid">
 	<div class="mb-4 flex flex-col gap-6">
 		<h1 class="text-2xl font-bold">Event Description</h1>
-		<div class="whitespace-pre-wrap leading-8">
+		<div class="whitespace-pre-wrap leading-8" use:testid={'description'}>
 			{event.description}
 		</div>
 	</div>

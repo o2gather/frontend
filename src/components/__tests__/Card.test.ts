@@ -44,7 +44,7 @@ describe('test Card', () => {
 	test('test correct render with preparing and member count is full', async () => {
 		const event = generateMock(schemas.Event);
 		event.established = false;
-		event.members_count = event.max_amount;
+		event.members_count = event.max_amount - 1;
 		const card = render(Card, {
 			props: {
 				event

@@ -20,18 +20,21 @@ describe('index test', () => {
 	});
 
 	test('test correct render category', () => {
-		const categoryLength = 5;
+		const maxCategoryLength = 5;
+		const categories = [
+			...new Set(new Array(maxCategoryLength).fill(0).map(() => generateMock(schemas.Category)))
+		];
 		const page = render(Page, {
 			props: {
 				data: {
-					categories: new Array(categoryLength).fill(0).map(() => generateMock(schemas.Category)),
+					categories,
 					events: []
 				}
 			}
 		});
 
-		const categories = page.getAllByTestId('category');
-		expect(categories.length).toBe(categoryLength);
+		const categoryElements = page.getAllByTestId('category');
+		expect(categoryElements.length).toBe(categories.length);
 	});
 
 	test('test correct render filtered event cards by category', async () => {

@@ -11,6 +11,7 @@ describe('test events/[id]/+page', () => {
 		const event = generateMock(schemas.Event);
 		const messages = new Array(messageLength).fill(0).map(() => generateMock(schemas.EventMsg));
 		event.established = false;
+		event.members_count = 0;
 
 		const page = render(Page, {
 			props: {
@@ -89,7 +90,8 @@ describe('test events/[id]/+page', () => {
 			});
 
 			expect(page.getByText(event.name));
-			expect(page.getByText(event.description));
+
+			expect(page.getByTestId('description').textContent).toBe(event.description);
 
 			const messageElements = page.getAllByTestId('message');
 			expect(messageElements.length).toBe(messageLength);
