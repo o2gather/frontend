@@ -130,8 +130,8 @@
 				{/if}
 			{/if}
 		</div>
-		{#if isOwner}
-			<div class="ml-auto">
+		<div class="ml-auto">
+			{#if isOwner}
 				<a
 					class="
 					inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white
@@ -201,8 +201,32 @@
 				>
 					Delete
 				</button>
-			</div>
-		{/if}
+			{/if}
+			<button
+				type="button"
+				class="rounded-lg bg-purple-700 px-3 py-2 text-sm font-medium text-white hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300"
+				on:click={() => {
+					navigator.clipboard
+						.writeText(`${window.location.origin}/events/${event.id}`)
+						.then(() => {
+							Swal.fire({
+								title: 'Copy Link',
+								text: 'The link has been copied to your clipboard.',
+								icon: 'success',
+								confirmButtonText: 'OK'
+							});
+						})
+						.catch(() => {
+							Swal.fire({
+								title: 'Error!',
+								html: `<div>Please copy the link manually.<div class="select-all mt-4 text-left">${window.location.origin}/events/${event.id}</div></div>`,
+								icon: 'error',
+								confirmButtonText: 'OK'
+							});
+						});
+				}}>Copy link</button
+			>
+		</div>
 	</div>
 
 	<div class="flex flex-wrap items-center text-gray-700">
