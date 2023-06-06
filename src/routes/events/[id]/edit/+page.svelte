@@ -55,7 +55,7 @@
 			}}
 		>
 			<div class="flex flex-col">
-				<ErrorMessage message={$errors.category && `A category must be selected.`} />
+				<ErrorMessage message={$errors.category} />
 
 				<div class="flex">
 					<label for="search-dropdown" class="sr-only mb-2 text-sm font-medium text-gray-900" />
