@@ -4,14 +4,23 @@
 
 	export let data;
 
+	function capitalizeFirstLetter(str: string) {
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	}
+
 	let { categories } = data;
+	categories = [...new Set(categories.map((category) => category.trim()))].map((category) =>
+		capitalizeFirstLetter(category)
+	);
 
 	let showStatus: 'All' | 'Established' | 'Preparing' = 'All';
 	let showStatusButtonHovered = false;
 
 	let selectedCategory: string | null = null;
 	$: filteredEvents = data.events.filter((event) => {
-		const isSelectedCategory = selectedCategory === null || event.category === selectedCategory;
+		const isSelectedCategory =
+			selectedCategory === null ||
+			event.category.trim().toUpperCase() === selectedCategory.trim().toUpperCase();
 		const isSelectedStatus =
 			showStatus === 'All' ||
 			(showStatus === 'Established' && event.established) ||
@@ -74,7 +83,7 @@
 	{#each categories as category}
 		<button
 			type="button"
-			class="{selectedCategory === category
+			class="{selectedCategory?.trim().toUpperCase() === category.trim().toUpperCase()
 				? 'border-blue-600 text-blue-700'
 				: 'border-white text-gray-900'} mb-3 mr-3 rounded-full border bg-white px-5 py-2.5 text-center text-base font-medium hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300"
 			on:click={() => (selectedCategory = category)}
