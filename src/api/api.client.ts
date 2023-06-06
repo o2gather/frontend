@@ -19,6 +19,7 @@ const Event = z.object({
 	min_amount: z.number().gte(2),
 	max_amount: z.number().gte(2),
 	amount: z.number().gte(0),
+	established: z.boolean(),
 	members: z
 		.array(
 			z.object({
@@ -29,8 +30,7 @@ const Event = z.object({
 			})
 		)
 		.optional(),
-	members_count: z.number().gte(0).optional(),
-	established: z.boolean()
+	members_count: z.number().gte(0).optional()
 });
 const DefaultError = z.object({ message: z.string(), error_code: z.string().optional() });
 const createEvent_Body = z.object({
@@ -48,8 +48,8 @@ const updateEvent_Body = z.object({
 	category: z.string(),
 	start_time: z.number(),
 	end_time: z.number(),
-	min_amount: z.number().gte(2).optional(),
-	max_amount: z.number().gte(2).optional(),
+	min_amount: z.number().gte(2),
+	max_amount: z.number().gte(2),
 	established: z.boolean().optional()
 });
 const DefaultMsg = z.object({ message: z.string(), message_code: z.string().optional() });
@@ -330,6 +330,11 @@ const endpoints = makeApi([
 		],
 		response: DefaultMsg,
 		errors: [
+			{
+				status: 400,
+				description: `Owning event or Has joined`,
+				schema: DefaultError
+			},
 			{
 				status: 404,
 				description: `Event not found`,

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { isoToDateTimeString } from '../../../utils';
 	import { superValidate, superForm } from 'sveltekit-superforms/client';
-	import { schemas } from '../../../api/api.client';
 	import ErrorMessage from '../../../components/ErrorMessage.svelte';
 	import { api } from '../../../api';
 	import { goto } from '$app/navigation';
+	import { CreateEventBody } from '../../../api/validation/event';
 
 	export let data;
 
@@ -27,7 +27,7 @@
 			method="post"
 			class="grid grid-flow-row gap-4"
 			on:submit|preventDefault={async () => {
-				const result = await superValidate($form, schemas.createEvent_Body);
+				const result = await superValidate($form, CreateEventBody);
 				if (!result.valid) {
 					$errors = result.errors;
 					return;
@@ -73,7 +73,7 @@
 						bind:value={$form.name}
 						{...$constraints.name}
 						on:input={() => {
-							superValidate($form, schemas.createEvent_Body).then((result) => {
+							superValidate($form, CreateEventBody).then((result) => {
 								$errors.name = result.errors.name;
 							});
 						}}
@@ -95,7 +95,7 @@
 							bind:value={$form.min_amount}
 							{...$constraints.min_amount}
 							on:input={() => {
-								superValidate($form, schemas.createEvent_Body).then((result) => {
+								superValidate($form, CreateEventBody).then((result) => {
 									$errors.min_amount = result.errors.min_amount;
 								});
 							}}
@@ -115,7 +115,7 @@
 							bind:value={$form.max_amount}
 							{...$constraints.max_amount}
 							on:input={() => {
-								superValidate($form, schemas.createEvent_Body).then((result) => {
+								superValidate($form, CreateEventBody).then((result) => {
 									$errors.max_amount = result.errors.max_amount;
 								});
 							}}
@@ -134,7 +134,7 @@
 							required
 							bind:value={startTime}
 							on:input={() => {
-								superValidate($form, schemas.createEvent_Body).then((result) => {
+								superValidate($form, CreateEventBody).then((result) => {
 									$errors.start_time = result.errors.start_time;
 								});
 							}}
@@ -152,7 +152,7 @@
 							required
 							bind:value={endTime}
 							on:input={() => {
-								superValidate($form, schemas.createEvent_Body).then((result) => {
+								superValidate($form, CreateEventBody).then((result) => {
 									$errors.end_time = result.errors.end_time;
 								});
 							}}
