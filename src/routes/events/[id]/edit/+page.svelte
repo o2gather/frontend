@@ -1,26 +1,26 @@
 <script lang="ts">
 	import { isoToDateTimeString } from '../../../../utils';
 	import { superValidate, superForm } from 'sveltekit-superforms/client';
-	import { schemas } from '../../../../api/api.client';
 	import ErrorMessage from '../../../../components/ErrorMessage.svelte';
 	import { api } from '../../../../api';
 	import { goto } from '$app/navigation';
+	import { UpdateEventBody } from '../../../../api/validation/event';
 
 	export let data;
 
 	const { form, errors, constraints } = superForm(data.form);
 	const { event } = data;
 
-	let startTime = isoToDateTimeString(new Date().getTime());
-	let endTime = isoToDateTimeString(new Date().getTime());
-
-	$: $form.start_time = new Date(startTime).getTime();
-	$: $form.end_time = new Date(endTime).getTime();
-
 	for (const key in $form) {
 		$form[key as keyof typeof $form] = event[key as keyof typeof $form] as never;
 	}
 	delete $form.established;
+
+	let startTime = isoToDateTimeString($form.start_time);
+	let endTime = isoToDateTimeString($form.end_time);
+
+	$: $form.start_time = new Date(startTime).getTime();
+	$: $form.end_time = new Date(endTime).getTime();
 </script>
 
 <div class="mx-12 mb-12 mt-8 flex flex-col gap-6 md:mx-36">
@@ -33,7 +33,7 @@
 			method="post"
 			class="grid grid-flow-row gap-4"
 			on:submit|preventDefault={async () => {
-				const result = await superValidate($form, schemas.createEvent_Body);
+				const result = await superValidate($form, UpdateEventBody);
 				if (!result.valid) {
 					$errors = result.errors;
 					return;
@@ -55,7 +55,7 @@
 			}}
 		>
 			<div class="flex flex-col">
-				<ErrorMessage message={$errors.category && `A category must be selected.`} />
+				<ErrorMessage message={$errors.category} />
 
 				<div class="flex">
 					<label for="search-dropdown" class="sr-only mb-2 text-sm font-medium text-gray-900" />
@@ -82,7 +82,7 @@
 						bind:value={$form.name}
 						{...$constraints.name}
 						on:input={() => {
-							superValidate($form, schemas.createEvent_Body).then((result) => {
+							superValidate($form, UpdateEventBody).then((result) => {
 								$errors.name = result.errors.name;
 							});
 						}}
@@ -104,7 +104,7 @@
 							bind:value={$form.min_amount}
 							{...$constraints.min_amount}
 							on:input={() => {
-								superValidate($form, schemas.createEvent_Body).then((result) => {
+								superValidate($form, UpdateEventBody).then((result) => {
 									$errors.min_amount = result.errors.min_amount;
 								});
 							}}
@@ -124,7 +124,7 @@
 							bind:value={$form.max_amount}
 							{...$constraints.max_amount}
 							on:input={() => {
-								superValidate($form, schemas.createEvent_Body).then((result) => {
+								superValidate($form, UpdateEventBody).then((result) => {
 									$errors.max_amount = result.errors.max_amount;
 								});
 							}}
@@ -143,7 +143,7 @@
 							required
 							bind:value={startTime}
 							on:input={() => {
-								superValidate($form, schemas.createEvent_Body).then((result) => {
+								superValidate($form, UpdateEventBody).then((result) => {
 									$errors.start_time = result.errors.start_time;
 								});
 							}}
@@ -161,7 +161,7 @@
 							required
 							bind:value={endTime}
 							on:input={() => {
-								superValidate($form, schemas.createEvent_Body).then((result) => {
+								superValidate($form, UpdateEventBody).then((result) => {
 									$errors.end_time = result.errors.end_time;
 								});
 							}}

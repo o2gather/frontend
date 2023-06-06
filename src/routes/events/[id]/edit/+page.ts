@@ -1,6 +1,6 @@
 import { superValidate } from 'sveltekit-superforms/server';
-import { schemas } from '../../../../api/api.client';
 import { api } from '../../../../api';
+import { UpdateEventBody } from '../../../../api/validation/event';
 
 export const load = async ({ params }) => {
 	const { id } = params;
@@ -12,7 +12,7 @@ export const load = async ({ params }) => {
 			},
 			withCredentials: true
 		}),
-		form: await superValidate(schemas.updateEvent_Body),
+		form: await superValidate(UpdateEventBody),
 		categories: await api.getCategories({ withCredentials: true })
 	};
 };

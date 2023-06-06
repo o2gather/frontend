@@ -91,6 +91,7 @@ export const handlers = [
 	rest.post(`/events/:eventId/leave`, (_, res, ctx) => {
 		const resultArray = [
 			[ctx.status(200), ctx.json(getLeaveEvent200Response())],
+			[ctx.status(400), ctx.json(getLeaveEvent400Response())],
 			[ctx.status(404), ctx.json(getLeaveEvent404Response())],
 			[ctx.status(500), ctx.json(getLeaveEvent500Response())]
 		];
@@ -263,6 +264,10 @@ export function getJoinEvent500Response() {
 
 export function getLeaveEvent200Response() {
 	return generateMock(schemas.DefaultMsg);
+}
+
+export function getLeaveEvent400Response() {
+	return generateMock(schemas.DefaultError);
 }
 
 export function getLeaveEvent404Response() {

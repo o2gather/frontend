@@ -81,7 +81,7 @@
 
 						<img src="/leave.svg" class="-mr-1 ml-2 h-4 w-4" alt="plus" />
 					</button>
-				{:else}
+				{:else if (event.members_count ?? 0) + 1 < event.max_amount}
 					<button
 						class="inline-flex cursor-pointer items-center rounded-lg bg-green-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
 						use:testid={'join-button'}
@@ -283,7 +283,7 @@
 		<span class="text-sm font-bold uppercase" use:testid={'status'}>
 			{#if event.established}
 				<div class="text-green-600">Established</div>
-			{:else if event.members_count === event.max_amount}
+			{:else if (event.members_count ?? 0) + 1 === event.max_amount}
 				<div class="text-red-600">Full</div>
 			{:else}
 				<div class="text-yellow-600">Preparing</div>

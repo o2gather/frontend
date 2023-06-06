@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { User } from '../api/api.client';
 import { api } from '../api';
+import { goto } from '$app/navigation';
 
 interface Auth {
 	userId?: string | null;
@@ -50,7 +51,8 @@ export const auth = {
 		);
 	},
 	logout: async () => {
-		await api.Logout(undefined, { withCredentials: true });
+		await api.loading.Logout(undefined, { withCredentials: true });
 		setUserId(null);
+		await goto('/');
 	}
 };
