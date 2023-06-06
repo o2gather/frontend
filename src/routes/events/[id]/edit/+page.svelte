@@ -5,6 +5,7 @@
 	import { api } from '../../../../api';
 	import { goto } from '$app/navigation';
 	import { UpdateEventBody } from '../../../../api/validation/event';
+	import Swal from 'sweetalert2';
 
 	export let data;
 
@@ -51,6 +52,11 @@
 					})
 					.catch((error) => {
 						console.log(error);
+						Swal.fire({
+							icon: 'error',
+							title: 'Oops...',
+							text: 'Invalid operation, please try again later.'
+						});
 					});
 			}}
 		>
