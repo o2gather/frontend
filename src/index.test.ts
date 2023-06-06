@@ -39,12 +39,14 @@ describe('index test', () => {
 
 	test('test correct render filtered event cards by category', async () => {
 		const eventLength = 5;
-		const categoryLength = 5;
-		const categories = new Array(categoryLength).fill(0).map(() => generateMock(schemas.Category));
+		const maxCategoryLength = 5;
+		const categories = [
+			...new Set(new Array(maxCategoryLength).fill(0).map(() => generateMock(schemas.Category)))
+		];
 		const events = new Array(eventLength).fill(0).map(() => generateMock(schemas.Event));
 
 		events.forEach((event) => {
-			event.category = categories[Math.floor(Math.random() * categoryLength)];
+			event.category = categories[Math.floor(Math.random() * categories.length)];
 		});
 
 		const page = render(Page, {
@@ -57,7 +59,7 @@ describe('index test', () => {
 		});
 
 		const categoriesElement = page.getAllByTestId('category');
-		for (let i = 0; i < categoryLength; i++) {
+		for (let i = 0; i < categories.length; i++) {
 			await fireEvent.click(categoriesElement[i]);
 			const cards = page.queryAllByTestId('card');
 			expect(cards.length).toBe(events.filter((event) => event.category === categories[i]).length);
