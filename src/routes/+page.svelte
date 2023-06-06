@@ -5,12 +5,15 @@
 	export let data;
 
 	function capitalizeFirstLetter(str: string) {
-		return str.charAt(0).toUpperCase() + str.slice(1);
+		return str
+			.split(' ')
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ');
 	}
 
 	let { categories } = data;
-	categories = [...new Set(categories.map((category) => category.trim()))].map((category) =>
-		capitalizeFirstLetter(category)
+	categories = [...new Set(categories.map((category) => category.trim().toLowerCase()))].map(
+		(category) => capitalizeFirstLetter(category)
 	);
 
 	let showStatus: 'All' | 'Established' | 'Preparing' = 'All';
