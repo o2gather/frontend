@@ -13,10 +13,10 @@
 >
 	<div class="flex h-full flex-col p-8">
 		<div class="flex justify-between gap-y-2">
-			<h5 class="mb-8 text-2xl font-bold tracking-tight text-gray-900">
+			<h5 class="mb-8 w-2/3 break-words text-2xl font-bold tracking-tight text-gray-900">
 				{event.name}
 			</h5>
-			<span class="ml-2 mt-1 whitespace-nowrap text-sm text-gray-400">
+			<span class="ml-2 mt-1 w-1/3 whitespace-nowrap text-sm text-gray-400">
 				{(event.members_count ?? 0) + 1} / {event.max_amount} Person
 			</span>
 		</div>
