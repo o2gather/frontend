@@ -20,21 +20,25 @@
 	let showStatus: 'All' | 'Established' | 'Preparing' = 'All';
 	let showStatusButtonHovered = false;
 
-	let selectedCategory: string | null = null;
-	$: filteredEvents = data.events.filter((event) => {
-		const isSelectedCategory =
-			selectedCategory === null ||
-			event.category.trim().toUpperCase() === selectedCategory.trim().toUpperCase();
-		const isSelectedStatus =
-			showStatus === 'All' ||
-			(showStatus === 'Established' && event.established) ||
-			(showStatus === 'Preparing' && !event.established);
+	let searchText = '';
 
-		return isSelectedCategory && isSelectedStatus;
-	});
+	let selectedCategory: string | null = null;
+	$: filteredEvents = data.events
+		.filter((event) => {
+			const isSelectedCategory =
+				selectedCategory === null ||
+				event.category.trim().toUpperCase() === selectedCategory.trim().toUpperCase();
+			const isSelectedStatus =
+				showStatus === 'All' ||
+				(showStatus === 'Established' && event.established) ||
+				(showStatus === 'Preparing' && !event.established);
+
+			return isSelectedCategory && isSelectedStatus;
+		})
+		.filter((event) => event.name.includes(searchText));
 </script>
 
-<div class="mx-2 flex flex-wrap items-center justify-center py-4 md:py-8">
+<div class="mx-2 flex flex-wrap items-center justify-center py-4">
 	<button
 		type="button"
 		use:testid={'filter-button'}
@@ -98,6 +102,33 @@
 		</button>
 	{/each}
 </div>
+
+<div class="relative mx-6 mb-8 md:mx-12">
+	<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+		<svg
+			aria-hidden="true"
+			class="h-5 w-5 text-gray-500"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+			xmlns="http://www.w3.org/2000/svg"
+			><path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+			/></svg
+		>
+	</div>
+	<input
+		type="search"
+		id="default-search"
+		class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+		placeholder="Search.."
+		bind:value={searchText}
+	/>
+</div>
+
 <div class="mx-6 mb-12 grid grid-cols-1 gap-6 md:mx-12 md:grid-cols-3">
 	{#each filteredEvents as event (event.id)}
 		<Card {event} />
