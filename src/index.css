@@ -2,12 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 * {
 	font-family: 'Montserrat', sans-serif;
 	scrollbar-gutter: stable;
 	scroll-behavior: smooth;
+}
+
+@layer utilities {
+	.overflow-wrap-anywhere {
+		overflow-wrap: anywhere;
+	}
 }

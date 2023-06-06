@@ -313,7 +313,7 @@
 	</div>
 </div>
 
-<div class="m-8 grid-cols-[3fr_2fr] gap-16 md:mx-36 xl:grid">
+<div class="overflow-wrap-anywhere m-8 grid-cols-[3fr_2fr] gap-16 md:mx-36 xl:grid">
 	<div class="mb-4 flex flex-col gap-6">
 		<h1 class="text-2xl font-bold">Event Description</h1>
 		<div class="whitespace-pre-wrap leading-8">
