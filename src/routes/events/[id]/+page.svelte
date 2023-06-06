@@ -133,17 +133,32 @@
 		{#if isOwner}
 			<div class="ml-auto">
 				<a
-					class="inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300"
-					href={`/events/${event.id}/edit`}
+					class="
+					inline-flex cursor-pointer items-center rounded-lg bg-yellow-500 px-3 py-2 text-center text-sm font-medium text-white
+					{event.established
+						? 'cursor-not-allowed opacity-50'
+						: 'cursor-pointer hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300'}
+					"
+					title={event.established ? 'Cannot edit an event that has been established' : ''}
+					href={event.established ? '' : `/events/${event.id}/edit`}
 					use:testid={'edit-button'}
 				>
 					Edit
 				</a>
 				<button
 					type="button"
-					class="rounded-lg bg-red-700 px-3 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300"
+					class="
+					rounded-lg bg-red-700 px-3 py-2 text-sm font-medium text-white
+					{event.established || (event.members_count || 0) > 0
+						? 'cursor-not-allowed opacity-50'
+						: 'cursor-pointer hover:bg-red-800 focus:outline-none focus:ring-4  focus:ring-red-300'}
+					"
+					title={event.established || (event.members_count || 0) > 0
+						? 'Cannot delete an event that has been established or has members'
+						: ''}
 					use:testid={'delete-button'}
 					on:click={() => {
+						if (event.established || (event.members_count || 0) > 0) return;
 						Swal.fire({
 							title: 'Delete Event',
 							text: 'Are you sure you want to delete this event?',
@@ -173,6 +188,12 @@
 									})
 									.catch((err) => {
 										console.log(err);
+										Swal.fire({
+											title: 'Error!',
+											text: 'Something went wrong.',
+											icon: 'error',
+											confirmButtonText: 'OK'
+										});
 									});
 							}
 						});
