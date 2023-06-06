@@ -1,7 +1,19 @@
-import { describe, it, expect } from 'vitest';
+import { render } from '@testing-library/svelte';
+import Page from './routes/+page.svelte';
+import { generateMock } from '@anatine/zod-mock';
+import { schemas } from './api/api.client';
 
-describe('sum test', () => {
-	it('adds 1 + 2 to equal 3', () => {
-		expect(1 + 2).toBe(3);
+describe('index test', () => {
+	test('test correct render event cards', () => {
+		const page = render(Page, {
+			props: {
+				data: {
+					categories: [],
+					events: []
+				}
+			}
+		});
+
+		console.log(page.container.innerHTML);
 	});
 });
