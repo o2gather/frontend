@@ -342,6 +342,12 @@
 		<span class="text-sm font-bold uppercase" use:testid={'status'}>
 			{#if event.established}
 				<div class="text-green-600">Established</div>
+			{:else if new Date().getTime() > event.end_time}
+				{#if (event.members_count ?? 0) + 1 < event.min_amount}
+					<div class="text-red-600">Expired</div>
+				{:else}
+					<div class="text-gray-600">Pending</div>
+				{/if}
 			{:else if (event.members_count ?? 0) + 1 === event.max_amount}
 				<div class="text-red-600">Full</div>
 			{:else}
