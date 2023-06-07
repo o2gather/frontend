@@ -74,6 +74,13 @@
 								})
 								.catch((err) => {
 									console.log(err);
+									Swal.fire({
+										title: 'Error',
+										text: 'Something went wrong',
+										icon: 'error',
+										showConfirmButton: false,
+										timer: 3000
+									});
 								});
 						}}
 					>
@@ -104,6 +111,13 @@
 									})
 									.catch((err) => {
 										console.log(err);
+										Swal.fire({
+											title: 'Error',
+											text: 'Something went wrong',
+											icon: 'error',
+											showConfirmButton: false,
+											timer: 3000
+										});
 									});
 							} else {
 								Swal.fire({
